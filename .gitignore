@@ -1,0 +1,12 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/OnlineTestSystem/bin/Debug/net8.0
+/OnlineTestSystem/obj
+/OnlineTestSystem.Models/bin/Debug/net8.0
+/OnlineTestSystem.Models/obj
+/OnlineTestSystem.Repository/bin/Debug/net8.0
+/OnlineTestSystem.Repository/obj
+/OnlineTestSystem.Services/bin/Debug/net8.0
+/OnlineTestSystem.Services/obj
