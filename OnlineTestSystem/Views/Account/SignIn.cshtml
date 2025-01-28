@@ -27,12 +27,12 @@
                         <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
                         <p class="text-white-50 mb-5">Please enter your login and password!</p>
                         <form asp-action="SignIn" asp-controller="Account">
-                            <div data-mdb-input-init class="form-outline form-white mb-5">
-                                <input type="email" id="typeEmailX" class="form-control form-control-lg" placeholder="Email Address" asp-for="EmailAddress" />
+                            <div data-mdb-input-init class="form-outline form-white mb-4">
+                                <input type="email" id="typeEmailX" class="form-control form-control-md" placeholder="Email Address" asp-for="EmailAddress" />
                             </div>
 
                             <div data-mdb-input-init class="form-outline form-white mb-4">
-                                <input type="password" id="typePasswordX" placeholder="Password" class="form-control form-control-lg" asp-for="Password" />
+                                <input type="password" id="typePasswordX" placeholder="Password" class="form-control form-control-md" asp-for="Password" />
                             </div>
                             <button data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-light btn-lg px-5" type="submit">Login</button>
                         </form>

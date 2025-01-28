@@ -9,6 +9,8 @@ namespace OnlineTestSystem.Services.Abstraction
 {
     public interface IAccountHelper
     {
-        UserModel GetUserDetails(SignInModel signInModel);
+        bool CheckEmailExists(string emailAddress);
+        string GenerateToken(UserModel userInfo);
+        UserModel SignIn(SignInModel loginModel);
     }
 }

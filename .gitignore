@@ -11,3 +11,5 @@
 /OnlineTestSystem.Services/bin/Debug/net8.0
 /OnlineTestSystem.Services/obj
 /.vs
+/OnlineTestSystem.DataAccess/bin/Debug/net8.0
+/OnlineTestSystem.DataAccess/obj

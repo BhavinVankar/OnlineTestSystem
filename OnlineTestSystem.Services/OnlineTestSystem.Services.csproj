@@ -7,13 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Abstraction\" />
-    <Folder Include="Repository\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\OnlineTestSystem.DataAccess\OnlineTestSystem.DataAccess.csproj" />
     <ProjectReference Include="..\OnlineTestSystem.Models\OnlineTestSystem.Models.csproj" />
-    <ProjectReference Include="..\OnlineTestSystem.Repository\OnlineTestSystem.Repository.csproj" />
   </ItemGroup>
 
 </Project>

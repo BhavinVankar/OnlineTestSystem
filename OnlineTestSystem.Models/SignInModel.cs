@@ -13,6 +13,5 @@ namespace OnlineTestSystem.Models
         [Required(ErrorMessage ="The EmailAddress is required!")]
         public string EmailAddress { get; set; }
         public string Password { get; set; }
-        public string Role { get; set; }
     }
 }
