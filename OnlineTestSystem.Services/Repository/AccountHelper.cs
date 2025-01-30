@@ -58,8 +58,8 @@ namespace OnlineTestSystem.Services.Repository
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.PrimarySid, Convert.ToString(userInfo.UserId.ToString())),
-                    new Claim(ClaimTypes.Name, userInfo.Name.ToString()),
+                    new Claim(ClaimTypes.PrimarySid, Convert.ToString(userInfo.Id.ToString())),
+                    new Claim(ClaimTypes.Name, (    userInfo.FirstName + userInfo.LastName).ToString()),
                     new Claim(ClaimTypes.Role, userInfo.Role.ToString()),
                     new Claim(ClaimTypes.Email, userInfo.EmailAddress.ToString()),
                 }),
@@ -68,6 +68,19 @@ namespace OnlineTestSystem.Services.Repository
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+
+        public bool CheckEmailExistsByUserId(string role, string emailAddress, Guid userId)
+        {
+            var userInfo = _accountRepository.CheckEmailExistsByUserId(role, emailAddress,userId);
+            if (userInfo != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

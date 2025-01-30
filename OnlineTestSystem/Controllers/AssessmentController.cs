@@ -1,42 +1,26 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using OnlineTestSystem.Models;
 using OnlineTestSystem.Models.Common;
+using OnlineTestSystem.Models.RequestModel;
 using OnlineTestSystem.Services.Abstraction;
 using OnlineTestSystem.Services.Repository;
-using System;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace OnlineTestSystem.Controllers
 {
     [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
-    public class UserController : Controller
+    public class AssessmentController : Controller
     {
-        private readonly IUserHelper _userHelper;
-        private readonly IAccountHelper _accountHelper;
-        public UserController(IUserHelper userHelper, IAccountHelper accountHelper)
+        private readonly IAssessmentHelper _assessmentHelper;
+        private static List<AssessmentRequestModel> testDatabase = new List<AssessmentRequestModel>();
+        public AssessmentController(IAssessmentHelper assessmentHelper)
         {
-            _userHelper = userHelper;
-            _accountHelper = accountHelper;
-        }
-        public IActionResult Dashboard()
-            {
-            try
-            {
-                if (HttpContext.User.Claims == null || HttpContext.User.Claims.Count() == 0)
-                {
-                    return RedirectToAction("SignIn", "Account");
-                }
-                return View();
-            }
-            catch (Exception ex)
-            {
-                return View(ex);
-            }
+            _assessmentHelper = assessmentHelper;
         }
         [HttpGet]
-        public IActionResult UserList()
+        public IActionResult AssessmentList()
         {
             try
             {
@@ -52,7 +36,7 @@ namespace OnlineTestSystem.Controllers
             }
         }
         [HttpGet]
-        public IActionResult Read_Users()
+        public IActionResult Read_Assessments()
         {
             try
             {
@@ -60,8 +44,8 @@ namespace OnlineTestSystem.Controllers
                 {
                     return Unauthorized();
                 }
-                var usersData = _userHelper.GetAllUserData();
-                if (usersData == null)
+                var assessmentsData = _assessmentHelper.GetAllAssessmentsData();
+                if (assessmentsData == null)
                 {
                     return BadRequest();
                 }
@@ -69,7 +53,7 @@ namespace OnlineTestSystem.Controllers
                 {
                     var userRoleClaim = User.Claims.FirstOrDefault(c => c.Type == AppConstants.UserRole);
                     ViewBag.UserRole = userRoleClaim?.Value;
-                    return PartialView("_UserList", usersData);
+                    return PartialView("_AssessmentsList", assessmentsData);
                 }
             }
             catch (Exception ex)
@@ -79,7 +63,7 @@ namespace OnlineTestSystem.Controllers
         }
 
         [HttpGet]
-        public IActionResult AddUser()
+        public IActionResult AddAssessment()
         {
             try
             {
@@ -87,7 +71,7 @@ namespace OnlineTestSystem.Controllers
                 {
                     return BadRequest();
                 }
-                return PartialView("_AddUserPartial");
+                return View(new AssessmentRequestModel());
             }
             catch (Exception e)
             {
@@ -96,7 +80,7 @@ namespace OnlineTestSystem.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddUser(UserModel userModel)
+        public IActionResult SaveAssessment(AssessmentRequestModel assessmentRequestModel)
         {
             try
             {
@@ -107,21 +91,15 @@ namespace OnlineTestSystem.Controllers
 
                 var userIdclaims = User.Claims.FirstOrDefault(c => c.Type == AppConstants.UserId);
                 ModelState.Clear();
-                TryValidateModel(userModel);
+                TryValidateModel(assessmentRequestModel);
                 if (ModelState.IsValid)
                 {
-                    var emailExists = _accountHelper.CheckEmailExists(userModel.EmailAddress);
-                    if (emailExists)
-                    {
-                        ModelState.AddModelError("EmailAddress", "Email Address is Exists");
-                        return PartialView("_AddUserPartial", userModel);
-                    }
-                    _userHelper.AddUser(userModel);
-                    return Ok(true);
+                    _assessmentHelper.AddAssessmentInfo(assessmentRequestModel);
+                    return RedirectToAction("AddAssessment");
                 }
                 else
                 {
-                    return PartialView("_AddUserPartial", userModel);
+                    return PartialView("AddAssessment", assessmentRequestModel);
 
                 }
             }
@@ -131,7 +109,29 @@ namespace OnlineTestSystem.Controllers
             }
         }
         [HttpGet]
-        public IActionResult EditUser(Guid id)
+        public IActionResult EditAssessment(Guid id)
+        {
+            try
+            {
+                if (HttpContext.User.Claims == null || HttpContext.User.Claims.Count() == 0)
+                {
+                    return BadRequest();
+                }
+                var assessmentInfo = _assessmentHelper.GetAssessmentById(id);
+                if (assessmentInfo == null)
+                {
+                    return BadRequest();
+                }
+                return View(assessmentInfo);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(404);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult UpdateAssessment(AssessmentRequestModel assessmentRequestModel)
         {
             try
             {
@@ -139,50 +139,29 @@ namespace OnlineTestSystem.Controllers
                 {
                     return Unauthorized();
                 }
-                var userInfo = _userHelper.GetUserById(id);
-                if (userInfo == null)
-                {
-                    return BadRequest();
-                }
-                return PartialView("_EditUserPartial", userInfo);
-            }
-            catch (Exception ex)
-            {
-                return View(ex.Message);
-            }
-        }
-        [HttpPost]
-        public IActionResult EditUser(UpdateUserModel userModel)
-        {
-            try
-            {
-                if (HttpContext.User.Claims == null || HttpContext.User.Claims.Count() == 0)
-                {
-                    return RedirectToAction("SignIn", "Account");
-                }
+
+                var userIdclaims = User.Claims.FirstOrDefault(c => c.Type == AppConstants.UserId);
                 ModelState.Clear();
-                TryValidateModel(userModel);
-                userModel.Role = AppConstants.Candidate;
-                var emailExists = _accountHelper.CheckEmailExistsByUserId(userModel.Role,userModel.EmailAddress, userModel.Id);
-                if (emailExists)
-                {
-                    ModelState.AddModelError("EmailAddress", "Email Address is Exists");
-                }
+                TryValidateModel(assessmentRequestModel);
                 if (ModelState.IsValid)
                 {
-                    _userHelper.UpdateUser(userModel);
-                    return Ok(true);
+                    _assessmentHelper.UpdateAssessmentInfo(assessmentRequestModel);
+                    return RedirectToAction("AssessmentList");
                 }
-                return PartialView("_EditUserPartial", userModel);
+                else
+                {
+                    return PartialView("EditAssessment", assessmentRequestModel);
+
+                }
             }
             catch (Exception ex)
             {
-                return View(ex);
+                return View(ex.Message);
             }
         }
 
         [HttpGet]
-        public IActionResult DeleteUser(Guid id)
+        public IActionResult ViewAssessment(Guid id)
         {
             try
             {
@@ -190,13 +169,12 @@ namespace OnlineTestSystem.Controllers
                 {
                     return Unauthorized();
                 }
-                var userInfo = _userHelper.GetUserById(id);
-                if (userInfo == null)
+                var assessmentInfo = _assessmentHelper.GetAssessmentById(id);
+                if (assessmentInfo == null)
                 {
                     return BadRequest();
                 }
-                _userHelper.DeleteUser(id);
-                return Ok(true);
+                return PartialView("_ViewAssessmentPartial", assessmentInfo);
             }
             catch (Exception ex)
             {
@@ -204,7 +182,7 @@ namespace OnlineTestSystem.Controllers
             }
         }
         [HttpGet]
-        public IActionResult ViewUser(Guid id)
+        public IActionResult DeleteAssessment(Guid id)
         {
             try
             {
@@ -212,17 +190,23 @@ namespace OnlineTestSystem.Controllers
                 {
                     return Unauthorized();
                 }
-                var userInfo = _userHelper.GetUserById(id);
-                if (userInfo == null)
+                var assessmentInfo = _assessmentHelper.GetAssessmentById(id);
+                if (assessmentInfo == null)
                 {
                     return BadRequest();
                 }
-                return PartialView("_ViewUserPartial", userInfo);
+                else
+                {
+                    _assessmentHelper.DeleteAssessment(id);
+                return RedirectToAction("AssessmentList", assessmentInfo);
+                }
             }
             catch (Exception ex)
             {
                 return View(ex.Message);
             }
         }
+
+
     }
 }

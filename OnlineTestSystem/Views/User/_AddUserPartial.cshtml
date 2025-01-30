@@ -1,0 +1,52 @@
+﻿@model UserModel
+<div class="container mt-5">
+    <form id="AddUserForm">
+        <div class="mb-3">
+            <label for="FirstName" class="form-label">First Name</label>
+            <input type="text" class="form-control" id="FirstName" name="FirstName" asp-for="FirstName" required>
+            <span class="text-danger" asp-validation-for="FirstName"></span>
+        </div>   
+        <div class="mb-3">
+            <label for="LastName" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="LastName" name="LastName" asp-for="LastName" required>
+            <span class="text-danger" asp-validation-for="LastName"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="EmailAddress" class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="EmailAddress" name="EmailAddress" asp-for="EmailAddress" required>
+            <span class="text-danger" asp-validation-for="EmailAddress"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="Password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="Password" name="Password" asp-for="Password" required minlength="8">
+            <span class="text-danger" asp-validation-for="Password"></span>
+        </div>  
+
+        <div class="mb-3">
+            <label for="ConfPassword" class="form-label">Confirm Password</label>
+            <input type="password" class="form-control" id="ConfPassword" name="ConfirmPassword" required>
+            <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
+        </div>
+
+        <!-- Hidden Role Field -->
+        <input type="hidden" class="form-control" id="Role" name="Role" value="Candidate">
+
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        // JavaScript to check if password and confirm password match
+        document.querySelector("form").addEventListener("submit", function (event) {
+            var password = document.getElementById("Password").value;
+            var confirmPassword = document.getElementById("ConfPassword").value;
+
+            if (password !== confirmPassword) {
+                event.preventDefault(); // Prevent form submission
+                alert("Passwords do not match!");
+            }
+        });
+    </script>
+}

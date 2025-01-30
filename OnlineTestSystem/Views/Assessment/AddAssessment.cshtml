@@ -1,0 +1,156 @@
+﻿@using OnlineTestSystem.Models.RequestModel
+@model AssessmentRequestModel
+@{
+    Layout = "~/Views/Shared/_MasterLayout.cshtml";
+}
+<title>Add Assessment</title>
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .containerForm {
+        max-width: 80%;
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        margin-top: 30px;
+    }
+
+    .question-container {
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin-top: 10px;
+        border-radius: 5px;
+        background: #f9f9f9;
+    }
+
+    .btn {
+        border-radius: 5px;
+    }
+
+    .panel {
+        border-radius: 5px;
+    }
+
+    .panel-heading {
+        font-weight: bold;
+        background-color: #007bff !important;
+        color: #ffffff !important;
+    }
+
+    .modal-content {
+        border-radius: 8px;
+    }
+</style>
+<div class="container containerForm">
+    <h2 class="text-center text-primary">Create a New Assessment</h2>
+
+    <form id="assessmentForm" method="POST" action="@Url.Action("SaveAssessment", "Assessment")">
+        <div class="form-group">
+            <label>Assessment Name</label>
+            <input type="text" class="form-control" name="TestName" required placeholder="Enter assessment name">
+        </div>
+
+        <div class="form-group">
+            <label>Assessment Description</label>
+            <textarea class="form-control" name="Description" rows="3" placeholder="Enter assessment description"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Passing Score</label>
+            <input type="number" class="form-control" name="PassingScore" required placeholder="Enter passing score">
+        </div>
+
+        <button type="button" class="btn btn-success" id="openSectionModal">
+            <i class="glyphicon glyphicon-plus"></i> Add Section
+        </button>
+
+        <div id="sectionsContainer"></div>
+
+        <hr>
+        <div style="float:right;">
+        <button type="submit" class="btn btn-primary text-center">Save Assessment</button></div>
+    </form>
+</div>
+@*-------- Section Model --------*@
+<div class="modal fade" id="sectionModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add Section</h4>
+            </div>
+            <div class="modal-body">
+                <label>Section Name</label>
+                <input type="text" class="form-control" id="sectionName" placeholder="Enter section name">
+                <h5 class="mt-3">Add Questions</h5>
+                <div id="questionsContainer"></div>
+                <div style="margin-top:20px;">
+                <button type="button" class="btn btn-default" id="addQuestionBtn">
+                    <i class="glyphicon glyphicon-plus"></i> Add Question
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" id="saveSection">Save Section</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var sectionCount = 0;
+
+    $("#openSectionModal").click(function () {
+        $("#sectionName").val("");
+        $("#questionsContainer").html("");
+        sectionCount++;
+        $("#sectionModal").modal("show");
+    });
+
+    $("#addQuestionBtn").click(function () {
+        var questionCount = $("#questionsContainer .question-container").length;
+        var questionHtml = `
+            <div class="question-container">
+                <input type="text" class="form-control question-input"
+                    name="Sections[${sectionCount - 1}].Questions[${questionCount}].QuestionText"
+                    placeholder="Enter question" required>
+                <label>Answer:</label>
+                <div>
+                    <label class="radio-inline">
+                        <input type="radio" name="Sections[${sectionCount - 1}].Questions[${questionCount}].CorrectAnswer" value="true" required> Yes
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="Sections[${sectionCount - 1}].Questions[${questionCount}].CorrectAnswer" value="false"> No
+                    </label>
+                </div>
+            </div>`;
+        $("#questionsContainer").append(questionHtml);
+    });
+
+    $("#saveSection").click(function () {
+        var sectionName = $("#sectionName").val().trim();
+        if (!sectionName) {
+            alert("Section Name is required!");
+            return;
+        }
+        var sectionIndex = sectionCount - 1;
+        var questions = $("#questionsContainer").children().clone();
+        var sectionHtml = `
+            <div class="panel panel-default mt-3">
+                <div class="panel-heading"><h4>${sectionName}</h4></div>
+                <div class="panel-body">
+                    <input type="hidden" name="Sections[${sectionIndex}].SectionName" value="${sectionName}">
+                    <div class="questionsContainer">
+                    </div>
+                </div>
+            </div>`;
+        var sectionElement = $(sectionHtml);
+        sectionElement.find(".questionsContainer").append(questions);
+        $("#sectionsContainer").append(sectionElement);
+        $("#sectionModal").modal("hide");
+    });
+</script>

@@ -1,0 +1,74 @@
+﻿@using OnlineTestSystem.Models.RequestModel
+@model AssessmentResponseModel
+@{
+    Layout = null;
+}
+
+<title>View Assessment</title>
+<style>
+    .panel-heading {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .question-container {
+        background: #f9f9f9;
+        padding: 15px;
+        margin: 10px 0;
+        border-left: 5px solid #007bff;
+        border-radius: 5px;
+    }
+
+        .question-container p {
+            margin: 5px 0;
+        }
+
+    .container {
+        margin-top: 30px;
+    }
+</style>
+<div class="container">
+    <h2 class="text-center text-primary">Assessment Details</h2>
+    <div class="panel panel-default">
+        <div class="panel-heading bg-primary text-white">
+            <h3 class="panel-title">@Model.TestName</h3>
+        </div>
+        <div class="panel-body">
+            <p><strong>Description:</strong> @Model.Description</p>
+            <p><strong>Passing Score:</strong> @Model.PassingScore</p>
+        </div>
+    </div>
+    @if (Model.Sections != null && Model.Sections.Count > 0)
+    {
+        foreach (var sectionItem in Model.Sections)
+        {
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4>@sectionItem.SectionOrder. @sectionItem.SectionName</h4>
+                </div>
+                <div class="panel-body">
+                    @if (sectionItem.Questions != null && sectionItem.Questions.Count > 0)
+                    {
+                        int counter = 1;
+                        foreach (var question in sectionItem.Questions)
+                        {
+                            <div class="question-container">
+                                <p><strong>Question @counter:</strong> @question.QuestionText</p>
+                                <p><strong>Correct Answer:</strong> <span class="label label-@(question.CorrectAnswer ? "success" : "danger")">@(question.CorrectAnswer ? "Yes" : "No")</span></p>
+                            </div>
+                            counter++;
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No questions available for this section.</p>
+                    }
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p class="text-muted text-center">No sections available.</p>
+    }
+</div>

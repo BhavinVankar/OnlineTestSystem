@@ -25,6 +25,18 @@ namespace OnlineTestSystem.DataAccess.Repository
             var result = vconn.QueryFirstOrDefault<UserModel>("sp_proc_CheckEmailExists", vParams, commandType: System.Data.CommandType.StoredProcedure);
             return result;
         }
+
+        public UserModel CheckEmailExistsByUserId(string role, string emailAddress, Guid userId)
+        {
+            using var vconn = GetOpenConnection();
+            var vParams = new DynamicParameters();
+            vParams.Add("@UserId", userId);
+            vParams.Add("@Role", role);
+            vParams.Add("@EmailAddress", emailAddress);
+            var result = vconn.QueryFirstOrDefault<UserModel>("sp_proc_CheckEmailExistsByUserId", vParams, commandType: System.Data.CommandType.StoredProcedure);
+            return result;
+        }
+
         public UserModel GetUserDetails(SignInModel signInModel)
         {
             using var vconn = GetOpenConnection();

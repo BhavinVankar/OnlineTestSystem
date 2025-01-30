@@ -10,6 +10,7 @@ namespace OnlineTestSystem.Services.Abstraction
     public interface IAccountHelper
     {
         bool CheckEmailExists(string emailAddress);
+        bool CheckEmailExistsByUserId(string role, string emailAddress, Guid userId);
         string GenerateToken(UserModel userInfo);
         UserModel SignIn(SignInModel loginModel);
     }

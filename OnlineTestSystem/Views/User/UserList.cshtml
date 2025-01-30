@@ -1,1 +1,90 @@
-﻿
+﻿@{
+    Layout = "~/Views/Shared/_MasterLayout.cshtml";
+    ViewData["Title"] = "User List Page";
+    ViewData["navId"] = "UserList";
+}
+@model UserModel
+<!-- Page-Title -->
+<div class="row">
+    <div class="col-sm-12 m-l-10">
+        <h4 class="page-title"> User</h4>
+        <ol class="breadcrumb">
+            <li>
+                <a href="@Url.Action("Dashboard","User")">Dashboard</a>
+            </li>
+            <li class="active">
+                Manage User
+            </li>
+        </ol>
+    </div>
+</div>
+<!---------------------- UserData Listing Page ---------------->
+<div class="row">
+    <div class="col-lg-12 ">
+        <div class="portlet">
+            <!-- /primary heading -->
+            <div class="portlet-heading">
+                <button class="btn btn-default btn-md waves-effect waves-light m-b-20 float-right" data-toggle="modal" data-target="#AddUserModal" onclick="btnAddUserClick()">
+                    <i class="fa fa-user-plus m-r-5"></i> Add User
+                </button>
+                <div class="table-responsive">
+                    <div id="UserPartialData">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- end col -->
+<!-------------------------------------AddUser Modal -------------------------------------------->
+<div id="AddUserModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add User</h4>
+            </div>
+            <div class="modal-body" id="modelAddUserBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="addclose" class="btn btn-danger waves-effect" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-info waves-effect waves-light" onclick="AddUserData()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!------------------------------------------- View User Modal ----------------------------------------->
+<div id="ViewUserModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;" aria-modal="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">View User</h4>
+            </div>
+            <div class="modal-body" id="modelViewUserBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!----------------------------------------- Edit User Modal --------------------------------------------------->
+<div id="EditUserModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit User</h4>
+            </div>
+            <div class="modal-body" id="modelEditUserBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="editclose" class="btn btn-danger waves-effect" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-info waves-effect waves-light" onclick="UpdateUserData()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/User/User.js"></script>

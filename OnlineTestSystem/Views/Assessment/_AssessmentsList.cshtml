@@ -1,0 +1,45 @@
+﻿@model List<AssessmentModel>
+@if (Model != null)
+{
+
+    <table class="table datatable" id="datatable">
+        <thead class="AssessmentTable tableHeader">
+            <tr>
+                <th class="text-center">CreatedOn</th>
+                <th class="text-center">Assessment Name</th>
+                <th class="text-center">Description</th>
+                <th class="text-center" style="width: 12%;">Action</th>
+            </tr>
+        </thead>
+        <tbody style="text-align:center;">
+            @foreach (var item in Model)
+            {
+                if (item.IsActive == true)
+                {
+                    <tr>
+                        <td>@item.CreatedOn.ToString("dd MMM yyyy")</td>
+                        <td>@item.TestName</td>
+                        <td>@item.Description</td>
+                        <td class="text-center" style="float:left;">
+                            <span class="tooltip-container">
+                                <button class="btn btn-warning btn-xs btn-icon fa fa-eye " data-toggle="modal" data-target="#ViewAssessmentModal" onclick="ViewAssessment('@item.Id')">
+                                </button>
+                                <span class="tooltip">View</span>
+                            </span>
+                            <span class="tooltip-container">
+                                <button class="btn btn-success btn-xs btn-icon fa fa-pencil" onclick="EditAssessment('@item.Id')"></button>
+                                <span class="tooltip">Edit</span>
+                            </span>
+
+                            <span class="tooltip-container">
+                                <button class="btn btn-danger btn-xs btn-icon fa fa-trash" onclick="deleteAssessment('@item.Id')" title="Delete Assessment"></button>
+                                <span class="tooltip">Delete</span>
+                            </span>
+                        </td>
+                    </tr>
+                }
+
+            }
+        </tbody>
+    </table>
+}

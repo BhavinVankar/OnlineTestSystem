@@ -77,10 +77,12 @@ namespace OnlineTestSystem
             });
             services.AddScoped<IAccountHelper, AccountHelper>();
             services.AddScoped<IUserHelper, UserHelper>();
+            services.AddScoped<IAssessmentHelper, AssessmentHelper>();
 
             string connectionstring = Configuration.GetConnectionString("DefaultConnection");
             services.AddTransient<IAccountRepository>(x => new AccountRepository(connectionstring));
             services.AddTransient<IUserRepository>(x => new UserRepository(connectionstring));
+            services.AddTransient<IAssessmentRepository>(x => new AssessmentRepository(connectionstring));
 
             services.AddAutoMapper(typeof(Startup));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

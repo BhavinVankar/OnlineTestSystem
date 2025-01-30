@@ -1,0 +1,102 @@
+﻿@using OnlineTestSystem.Models.RequestModel
+@model AssessmentResponseModel
+@{
+    Layout = "~/Views/Shared/_MasterLayout.cshtml";
+}
+
+<title>Edit Assessment</title>
+<style>
+    .panel-heading {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .question-container {
+        background: #f9f9f9;
+        padding: 15px;
+        margin: 10px 0;
+        border-left: 5px solid #007bff;
+        border-radius: 5px;
+    }
+
+        .question-container p {
+            margin: 5px 0;
+        }
+
+    .container {
+        margin-top: 30px;
+    }
+</style>
+
+<div class="container">
+    <h2 class="text-center text-primary">Edit Assessment</h2>
+    <form id="updateAssessmentForm" method="post" action="@Url.Action("UpdateAssessment")">
+        <input type="hidden" name="Id" asp-for="Id" />
+
+        <div class="panel panel-default">
+            <div class="panel-heading bg-primary text-white">
+                <h3 class="panel-title">
+                    <input type="text" name="TestName" class="form-control" asp-for="TestName" required />
+                </h3>
+            </div>
+            <div class="panel-body">
+                <label><strong>Description:</strong></label>
+                <textarea name="Description" class="form-control" asp-for="Description" required></textarea>
+
+                <label><strong>Passing Score:</strong></label>
+                <input type="number" name="PassingScore" class="form-control" asp-for="PassingScore" required />
+            </div>
+        </div>
+
+        @if (Model.Sections?.Any() == true)
+        {
+            int sectionIndex = 0;
+            @foreach (var sectionItem in Model.Sections)
+            {
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h4>
+                            <input type="hidden" name="Sections[@sectionIndex].Id" value="@sectionItem.Id" />
+                            <input type="text" name="Sections[@sectionIndex].SectionName" class="form-control" value="@sectionItem.SectionName" required />
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        @if (sectionItem.Questions?.Any() == true)
+                        {
+                            int questionIndex = 0;
+                            @foreach (var question in sectionItem.Questions)
+                            {
+                                <div class="question-container">
+                                    <input type="hidden" name="Sections[@sectionIndex].Questions[@questionIndex].Id" value="@question.Id" />
+
+                                    <label><strong>Question @(questionIndex + 1):</strong></label>
+                                    <input type="text" name="Sections[@sectionIndex].Questions[@questionIndex].QuestionText" class="form-control" value="@question.QuestionText" required />
+
+                                    <label><strong>Correct Answer:</strong></label>
+                                    <select name="Sections[@sectionIndex].Questions[@questionIndex].CorrectAnswer" class="form-control" required>
+                                        <option value="true" selected="@(question.CorrectAnswer ? "selected" : null)">Yes</option>
+                                        <option value="false" selected="@(question.CorrectAnswer ? null : "selected")">No</option>
+                                    </select>
+                                </div>
+                                questionIndex++;
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted">No questions available for this section.</p>
+                        }
+                    </div>
+                </div>
+                sectionIndex++;
+            }
+        }
+        else
+        {
+            <p class="text-muted text-center">No sections available.</p>
+        }
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+    </form>
+</div>

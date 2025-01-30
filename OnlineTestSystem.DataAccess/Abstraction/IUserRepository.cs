@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OnlineTestSystem.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,10 @@ namespace OnlineTestSystem.DataAccess.Abstraction
 {
     public interface IUserRepository
     {
+        void AddUser(UserModel userModel);
+        void DeleteUser(Guid userId);
+        List<UserModel> GetAllUserData();
+        UserModel GetUserById(Guid userId);
+        void UpdateUser(UpdateUserModel updateUserModel);
     }
 }

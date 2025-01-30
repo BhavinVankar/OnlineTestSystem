@@ -12,5 +12,6 @@ namespace OnlineTestSystem.DataAccess.Abstraction
         UserModel GetUserDetails(SignInModel signInModel);
         UserModel CheckEmailExists(string emailAddress);
         UserModel SignIn(SignInModel loginModel);
+        UserModel CheckEmailExistsByUserId(string role, string emailAddress, Guid userId);
     }
 }

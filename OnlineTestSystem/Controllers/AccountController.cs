@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace OnlineTestSystem.Controllers
 {
+    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     public class AccountController : Controller
     {
         private readonly IAccountHelper _accountHelper;
@@ -17,11 +18,17 @@ namespace OnlineTestSystem.Controllers
             _accountHelper = accountHelper;
         }
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult SignIn()
         {
+            if (HttpContext.User.Claims.Any() || HttpContext.User.Claims.Count() > 0)
+            {
+                return RedirectToAction("Dashboard", "User");
+            }
             return View();
         }
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> SignInAsync(SignInModel loginModel)
         {
             try
@@ -43,7 +50,7 @@ namespace OnlineTestSystem.Controllers
                                     var claims = new List<Claim>()
                                         {
                                             new Claim(AppConstants.Token, jToken),
-                                                new Claim(AppConstants.UserId, userInfo.UserId.ToString()),
+                                                new Claim(AppConstants.UserId, userInfo.Id.ToString()),
                                                 new Claim(AppConstants.UserRole, userInfo.Role)
                                             };
                                     var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -54,7 +61,6 @@ namespace OnlineTestSystem.Controllers
                                     });
 
                                     HttpContext.Session.SetString(AppConstants.Token, jToken);
-                                    userInfo.Token = jToken;
                                     return RedirectToAction("Dashboard", "User");
                                 }
                             }
@@ -66,7 +72,7 @@ namespace OnlineTestSystem.Controllers
                                     var claims = new List<Claim>()
                                         {
                                                 new Claim(AppConstants.Token, jToken),
-                                                new Claim(AppConstants.UserId, userInfo.UserId.ToString()),
+                                                new Claim(AppConstants.UserId, userInfo.Id.ToString()),
                                                 new Claim(AppConstants.UserRole, userInfo.Role)
                                             };
                                     var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -76,7 +82,6 @@ namespace OnlineTestSystem.Controllers
                                         IsPersistent = true
                                     });
                                     HttpContext.Session.SetString(AppConstants.Token, jToken);
-                                    userInfo.Token = jToken;
                                     return RedirectToAction("Dashboard", "User");
                                 }
                             }
@@ -94,6 +99,7 @@ namespace OnlineTestSystem.Controllers
             }
         }
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult SignOut()
         {
             try

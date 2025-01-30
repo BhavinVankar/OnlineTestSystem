@@ -9,6 +9,7 @@ namespace OnlineTestSystem.Models.Common
     public class AppConstants
     {
         public static string Admin = "Admin";
+        public static string Candidate = "Candidate";
         public static string True = "true";
 
         public static string Token = "Token";

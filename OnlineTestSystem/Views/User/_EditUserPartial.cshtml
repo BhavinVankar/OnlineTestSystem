@@ -1,0 +1,25 @@
+﻿@model UserModel
+<div class="container mt-5">
+    <form id="EditUserForm">
+        <div class="mb-3">
+            <label for="FirstName" class="form-label">First Name</label>
+            <input type="text" class="form-control" id="FirstName" name="FirstName" asp-for="FirstName" required>
+            <span class="text-danger" asp-validation-for="FirstName"></span>
+        </div> 
+        <div class="mb-3">
+            <label for="LastName" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="Name" name="LastName" asp-for="LastName" required>
+            <span class="text-danger" asp-validation-for="LastName"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="EmailAddress" class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="EmailAddress" name="EmailAddress" asp-for="EmailAddress" required>
+            <span class="text-danger" asp-validation-for="EmailAddress"></span>
+        </div>
+        <!-- Hidden Role Field -->
+        <input type="hidden" class="form-control" id="Role" name="Role" value="Candidate" asp-for="Role">
+        <input type="hidden" class="form-control" asp-for="Id">
+
+    </form>
+</div>

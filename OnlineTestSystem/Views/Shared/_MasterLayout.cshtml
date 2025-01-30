@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@using OnlineTestSystem.Models.Common;
+@{
+    var roleClaims = User.Claims.FirstOrDefault(c => c.Type == AppConstants.UserRole);
+    var userRole = roleClaims?.Value;
+}
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -10,7 +15,7 @@
     <meta http-equiv="Expires" content="0">
 
 
-    <link rel="icon" type="image/x-icon" href="~/assets/images/favicon_1.ico">
+    <link rel="icon" type="image/x-icon" href="#">
     <title>Admin Dashboard- @ViewData["Title"]</title>
     <!-- Plugins css-->
     <link href="~/assets/plugins/multiselect/css/multi-select.css" rel="stylesheet" type="text/css" />
@@ -184,18 +189,20 @@
                     <ul>
 
                         <li class="text-muted menu-title">Navigation</li>
+                        @if (userRole == AppConstants.Admin)
+                        {
+                            <li>
+                                <a href="@Url.Action("Dashboard","User")" class="waves-effect"><i class="fa fa-home"></i> <span>Dashboard</span> </a>
+                            </li>
 
-                        <li>
-                            <a href="@Url.Action("Dashboard","User")" class="waves-effect"><i class="fa fa-home"></i> <span>Dashboard</span> </a>
-                        </li>
-                        
-                        <li>
-                            <a href="@Url.Action("UserList","User")" class="waves-effect"><i class="fa fa-home"></i> <span>Users</span> </a>
-                        </li>
+                            <li>
+                                <a href="@Url.Action("UserList","User")" class="waves-effect"><i class="fa fa-users"></i> <span>Users</span> </a>
+                                <a href="@Url.Action("AssessmentList","Assessment")" class="waves-effect"><i class="fa fa-check"></i> <span>Manage Assessments</span> </a>
+                            </li>
+                        }
                         <hr>
                         <li>
                             <a href="@Url.Action("SignOut","Account")" class="waves-effect"><i class="fa fa-power-off"></i><span>Logout</span></a>
-
                         </li>
                     </ul>
                     <div class="clearfix"></div>
@@ -363,6 +370,7 @@
     <script src="~/assets/js/jquery.app.js"></script>
 
     <script src="~/assets/plugins/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="~/lib/sweetalert/sweetalert.min.js"></script>
     <script src="~/lib/sweetalert/sweetalert.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <!--form validation init-->
