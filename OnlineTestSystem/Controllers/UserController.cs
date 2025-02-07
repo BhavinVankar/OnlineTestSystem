@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using OnlineTestSystem.Models;
 using OnlineTestSystem.Models.Common;
 using OnlineTestSystem.Services.Abstraction;
@@ -21,7 +22,7 @@ namespace OnlineTestSystem.Controllers
             _accountHelper = accountHelper;
         }
         public IActionResult Dashboard()
-            {
+        {
             try
             {
                 if (HttpContext.User.Claims == null || HttpContext.User.Claims.Count() == 0)
@@ -163,7 +164,7 @@ namespace OnlineTestSystem.Controllers
                 ModelState.Clear();
                 TryValidateModel(userModel);
                 userModel.Role = AppConstants.Candidate;
-                var emailExists = _accountHelper.CheckEmailExistsByUserId(userModel.Role,userModel.EmailAddress, userModel.Id);
+                var emailExists = _accountHelper.CheckEmailExistsByUserId(userModel.Role, userModel.EmailAddress, userModel.Id);
                 if (emailExists)
                 {
                     ModelState.AddModelError("EmailAddress", "Email Address is Exists");
@@ -224,5 +225,13 @@ namespace OnlineTestSystem.Controllers
                 return View(ex.Message);
             }
         }
+
+        public IActionResult GetUserStats()
+        {
+            var activeUsers = _userHelper.GetAllUsers().Count(u => u.IsActive == true);
+            var inactiveUsers = _userHelper.GetAllUsers().Count(u => u.IsActive == false);
+            return Json(new { activeUsers, inactiveUsers });  // Return JSON response
+        }
+
     }
 }

@@ -1,0 +1,72 @@
+﻿@{
+    Layout = "~/Views/Shared/_MasterLayout.cshtml";
+    ViewData["Title"] = "AssessmentMapping List Page";
+    ViewData["navId"] = "AssessmentMappingList";
+}
+@model AssessmentMappingModel
+<!-- Page-Title -->
+<div class="row">
+    <div class="col-sm-12 m-l-10">
+        <h4 class="page-title"> Assessment Mapping</h4>
+        <ol class="breadcrumb">
+            <li>
+                <a href="@Url.Action("Dashboard","AssessmentMappings")">Dashboard</a>
+            </li>
+            <li class="active">
+                Manage Assessment Mapping
+            </li>
+        </ol>
+    </div>
+</div>
+<!---------------------- AssessmentData Listing Page ---------------->
+<div class="row">
+    <div class="col-lg-12 ">
+        <div class="portlet">
+            <!-- /primary heading -->
+            <div class="portlet-heading">
+                <button class="btn btn-default btn-md waves-effect waves-light m-b-20 float-right" data-toggle="modal" data-target="#AddAssessmentMappingModal" onclick="btnAddAssessmentMappingClick()">
+                    <i class="fa fa-AssessmentMapping-plus m-r-5"></i> Assign Assessment
+                </button>
+                <div class="table-responsive">
+                    <div id="AssessmentMappingPartialData">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- end col -->
+<!------------------------------------------- View Assessment Mapping Modal ----------------------------------------->
+<div id="ViewAssessmentMappingModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;" aria-modal="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">View Assessment</h4>
+            </div>
+            <div class="modal-body" id="modelViewAssessmentMappingBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-------------------------------------AddAssessmentMapping Modal -------------------------------------------->
+<div id="AddAssessmentMappingModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Assessment Mapping</h4>
+            </div>
+            <div class="modal-body" id="modelAddAssessmentMappingBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="addclose" class="btn btn-danger waves-effect" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-info waves-effect waves-light" onclick="AddAssessmentMappingData()">Save Mapping</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/js/AssessmentMapping/AssessmentMapping.js"></script>

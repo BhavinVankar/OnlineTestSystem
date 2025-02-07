@@ -25,7 +25,13 @@ namespace OnlineTestSystem.DataAccess.Repository
             var userList = vconn.Query<UserModel>("sp_proc_GetAllUserData", vParams, commandType: CommandType.StoredProcedure);
             return userList.ToList();
         }
-
+        public List<UserModel> GetAllUsers()
+        {
+            using var vconn = GetOpenConnection();
+            var vParams = new DynamicParameters();
+            var userList = vconn.Query<UserModel>("sp_proc_GetAllUsers", vParams, commandType: CommandType.StoredProcedure);
+            return userList.ToList();
+        }
         public UserModel GetUserById(Guid userId)
         {
             using var vconn = GetOpenConnection();

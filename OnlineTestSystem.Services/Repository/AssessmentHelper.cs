@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using OnlineTestSystem.DataAccess.Abstraction;
 using OnlineTestSystem.Models;
 using OnlineTestSystem.Models.RequestModel;
+using OnlineTestSystem.Models.ResponseModel;
 using OnlineTestSystem.Services.Abstraction;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace OnlineTestSystem.Services.Repository
     {
         private readonly IAssessmentRepository _assessmentRepository;
         private readonly IMapper _mapper;
-        public AssessmentHelper(IAssessmentRepository assessmentRepository,IMapper mapper)
+        public AssessmentHelper(IAssessmentRepository assessmentRepository, IMapper mapper)
         {
             _assessmentRepository = assessmentRepository;
             _mapper = mapper;
@@ -25,10 +26,10 @@ namespace OnlineTestSystem.Services.Repository
 
         public void AddAssessmentInfo(AssessmentRequestModel assessmentRequestModel)
         {
-           
-            var assessmentData = _mapper.Map<AssessmentRequestModel,AssessmentModel>(assessmentRequestModel);
+
+            var assessmentData = _mapper.Map<AssessmentRequestModel, AssessmentModel>(assessmentRequestModel);
             Guid testId = _assessmentRepository.AddAssessmentInfo(assessmentData);
-            int counter=1;
+            int counter = 1;
             foreach (var item in assessmentRequestModel.Sections)
             {
                 item.TestId = testId;
@@ -48,7 +49,7 @@ namespace OnlineTestSystem.Services.Repository
         public void UpdateAssessmentInfo(AssessmentRequestModel assessmentRequestModel)
         {
 
-             _assessmentRepository.UpdateAssessmentInfo(assessmentRequestModel);
+            _assessmentRepository.UpdateAssessmentInfo(assessmentRequestModel);
         }
         public void DeleteAssessment(Guid id)
         {
@@ -64,14 +65,51 @@ namespace OnlineTestSystem.Services.Repository
             }
             else
             {
-                return null;
+                return new List<AssessmentModel>();
             }
         }
 
         public AssessmentResponseModel GetAssessmentById(Guid id)
         {
-            var assessmentInfo=_assessmentRepository.GetAssessmentById(id);
+            var assessmentInfo = _assessmentRepository.GetAssessmentById(id);
             return assessmentInfo;
+        }
+
+        public List<AssessmentMappingModel> GetAllAssessmentsMappingData()
+        {
+            var allAssessmentMappingList = _assessmentRepository.GetAllAssessmentsMappingData();
+            if (allAssessmentMappingList != null)
+            {
+                return allAssessmentMappingList;
+            }
+            else
+            {
+                return new List<AssessmentMappingModel>();
+            }
+        }
+
+        public void AddAssessmentMapping(AddAssessmentMappingModel addAssessmentMappingModel)
+        {
+            _assessmentRepository.AddAssessmentMapping(addAssessmentMappingModel);
+        }
+
+        public AssessmentMappingViewModel GetAssessmentMappingById(Guid id)
+        {
+            var result = _assessmentRepository.GetAssessmentMappingById(id);
+            if (result == null)
+            {
+                return new AssessmentMappingViewModel();
+            }
+            else
+            {
+                return result;
+            }
+        }
+
+        public List<AssessmentModel> GetAllPendingAssessmentsDataById(Guid userId)
+        {
+            var allPendingAssessment = _assessmentRepository.GetAllPendingAssessmentsDataById(userId);
+            return allPendingAssessment;
         }
     }
 }

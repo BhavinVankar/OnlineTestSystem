@@ -3,6 +3,7 @@ using OnlineTestSystem.DataAccess.Abstraction;
 using OnlineTestSystem.DataAccess.StoredProcedureDbAccess;
 using OnlineTestSystem.Models;
 using OnlineTestSystem.Models.RequestModel;
+using OnlineTestSystem.Models.ResponseModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -33,6 +34,18 @@ namespace OnlineTestSystem.DataAccess.Repository
             vconn.Execute("sp_proc_AddAssessmentInfo", vParams, commandType: CommandType.StoredProcedure);
 
             return vParams.Get<Guid>("@Id");
+        }
+
+        public void AddAssessmentMapping(AddAssessmentMappingModel addAssessmentMappingModel)
+        {
+            using var vconn = GetOpenConnection();
+            var vParams = new DynamicParameters();
+            vParams.Add("@Id", addAssessmentMappingModel.Id);
+            vParams.Add("@UserId", addAssessmentMappingModel.UserId);
+            vParams.Add("@Assigned_At", DateTime.UtcNow);
+            vParams.Add("@Status", 1);
+            vParams.Add("@CreatedOn", DateTime.UtcNow);
+            vconn.Execute("sp_proc_AddAssessmentMapping", vParams, commandType: CommandType.StoredProcedure);
         }
 
         public void AddQuestion(QuestionModel questionData)
@@ -80,6 +93,22 @@ namespace OnlineTestSystem.DataAccess.Repository
             var assessmentList = vconn.Query<AssessmentModel>("sp_proc_GetAllAssessmentsData", vParams, commandType: CommandType.StoredProcedure);
             return assessmentList.ToList();
         }
+        public List<AssessmentMappingModel> GetAllAssessmentsMappingData()
+        {
+            using var vconn = GetOpenConnection();
+            var vParams = new DynamicParameters();
+            var assessmentList = vconn.Query<AssessmentMappingModel>("sp_proc_GetAllAssessmentsMappingData", vParams, commandType: CommandType.StoredProcedure);
+            return assessmentList.ToList();
+        }
+
+        public List<AssessmentModel> GetAllPendingAssessmentsDataById(Guid userId)
+        {
+            using var vconn = GetOpenConnection();
+            var vParams = new DynamicParameters();
+            vParams.Add("@Id",userId);
+            var assessmentList = vconn.Query<AssessmentModel>("sp_proc_GetAllPendingAssessmentsDataById", vParams, commandType: CommandType.StoredProcedure);
+            return assessmentList.ToList();
+        }
 
         public AssessmentResponseModel GetAssessmentById(Guid id)
         {
@@ -98,6 +127,16 @@ namespace OnlineTestSystem.DataAccess.Repository
             assessment.Sections = sections;
             return assessment;
         }
+
+        public AssessmentMappingViewModel GetAssessmentMappingById(Guid id)
+        {
+            using var vconn = GetOpenConnection();
+            var vParams = new DynamicParameters();
+            vParams.Add("@Id",id);
+            var assessmentList = vconn.Query<AssessmentMappingViewModel>("sp_proc_GetAssessmentMappingById", vParams, commandType: CommandType.StoredProcedure);
+            return assessmentList.FirstOrDefault();
+        }
+
         public void UpdateAssessmentInfo(AssessmentRequestModel assessmentData)
         {
             using var vconn = GetOpenConnection();

@@ -32,6 +32,11 @@ namespace OnlineTestSystem.Services.Repository
             var allUsers = _userRepository.GetAllUserData();
             return allUsers;
         }
+        public List<UserModel> GetAllUsers()
+        {
+            var allUsers = _userRepository.GetAllUsers();
+            return allUsers;
+        }
 
         public UserModel GetUserById(Guid userId)
         {

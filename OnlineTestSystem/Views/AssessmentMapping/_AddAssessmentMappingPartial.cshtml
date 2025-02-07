@@ -1,0 +1,55 @@
+﻿@model AddAssessmentMappingModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="~/assets/plugins/multiselect/css/multi-select.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <form id="AddAssessmentMappingForm" method="post">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card-box">
+                    <h4 class="m-t-0 m-b-30 header-title"><b>Assign Assessments</b></h4>
+
+                    <!-- Assessments Dropdown -->
+                    <div class="form-group">
+                        <label for="assessmentsDropdown">Select Assessment</label>
+                        <select id="assessmentsDropdown" name="Id" class="form-control">
+                            <option value="">-- Select Assessment --</option>
+                            @foreach (var assessment in ViewBag.Assessments)
+                            {
+                                <option value="@assessment.Value">@assessment.Text</option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Multiple Select Dropdown for Users -->
+                    <div class="form-group">
+                        <label for="usersDropdown">Select Users</label>
+                        <select multiple="multiple" class="multi-select" name="users" id="usersDropdown">
+                            @foreach (var user in ViewBag.Users)
+                            {
+                                <option value="@user.Value">@user.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Scripts -->
+    <script src="~/assets/plugins/multiselect/js/jquery.multi-select.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#usersDropdown').multiSelect();
+            $('#assessmentsDropdown').select2();
+        });
+    </script>
+
+</body>
+</html>

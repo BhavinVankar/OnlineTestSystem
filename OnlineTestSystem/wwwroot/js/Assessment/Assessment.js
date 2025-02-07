@@ -1,6 +1,6 @@
 ﻿
 $(document).ready(function () {
-    LoadAssessmentData(1);
+    LoadAssessmentData();
 });
 
 //------------------Assessment Listing--------------------------

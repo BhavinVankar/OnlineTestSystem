@@ -1,0 +1,35 @@
+﻿@model List<AssessmentModel>
+
+@if (Model != null)
+{
+    <div class="container mt-4">
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                if (item.IsActive == true)
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4" style="border: 10px solid;border-radius: 25px;padding: 10px;text-align: center;border-color: antiquewhite; margin:10px;height: 280px;">
+                        <div class="card shadow-lg rounded-3 border-1 h-100">
+                            <div class="card-header">
+                                <img src="https://cdn4.vectorstock.com/i/1000x1000/13/53/passing-exam-test-vector-26981353.jpg" class="card-img-top rounded-top" width="100px" alt="Assessment Image">
+                            </div>
+                            <div class="card-body text-center">
+                                <h5 class="card-title font-weight-bold">@item.TestName</h5>
+                                <p class="card-text text-muted">@(item.Description.Length > 35 ? item.Description.Substring(0, 35) + "..." : item.Description)</p>
+                                <p class="card-text"><small class="text-muted">@item.CreatedOn.ToString("dd MMM yyyy")</small></p>
+                            </div>
+                            <div class="card-footer">
+                                <span class="tooltip-container">
+                                    <button class="btn btn-primary btn-lg btn-icon fa fa-play" data-toggle="modal" data-target="#TermsAndConditionAssessmentModal" onclick="TermsAndConditionAssessment('@item.Id')">
+                                        Start Assessment
+                                    </button>
+                                    <span class="tooltip">Start Assessment</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>              
+                }
+            }
+        </div>
+    </div>
+}

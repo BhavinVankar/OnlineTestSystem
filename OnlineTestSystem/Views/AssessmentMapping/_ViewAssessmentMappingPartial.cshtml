@@ -1,0 +1,29 @@
+﻿@model AssessmentMappingViewModel
+@{
+    Layout = null;
+}
+<div class="container mt-4">
+    <h2>Assessment Mapping Details</h2>
+    <table class="table table-bordered">
+        <tr>
+            <th>Assessment Name</th>
+            <td>@Model.TestName</td>
+        </tr>
+        <tr>
+            <th>Passing Score</th>
+            <td>@Model.PassingScore</td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>@Model.Description</td>
+        </tr>
+        <tr>
+            <th>User Name</th>
+            <td>@Model.Name</td>
+        </tr>
+        <tr>
+            <th>Email Address</th>
+            <td>@Model.EmailAddress</td>
+        </tr>
+    </table>
+</div>

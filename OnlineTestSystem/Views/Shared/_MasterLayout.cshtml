@@ -37,7 +37,6 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js"></script>
     <!--form validation init-->
-    <link href="~/css/phonecode.css" rel="stylesheet" />
     <link href="~/css/site.css" rel="stylesheet" />
 
 </head>
@@ -194,11 +193,20 @@
                             <li>
                                 <a href="@Url.Action("Dashboard","User")" class="waves-effect"><i class="fa fa-home"></i> <span>Dashboard</span> </a>
                             </li>
-
                             <li>
                                 <a href="@Url.Action("UserList","User")" class="waves-effect"><i class="fa fa-users"></i> <span>Users</span> </a>
-                                <a href="@Url.Action("AssessmentList","Assessment")" class="waves-effect"><i class="fa fa-check"></i> <span>Manage Assessments</span> </a>
-                                <a href="@Url.Action("AssessmentMappingList","Assessment")" class="waves-effect"><i class="fa fa-check"></i> <span>Assessment Mapping</span> </a>
+                                <a href="@Url.Action("AssessmentList","Assessment")" class="waves-effect"><i class="md  md-view-list"></i> <span>Manage Assessments</span> </a>
+                                <a href="@Url.Action("AssessmentMappingList","AssessmentMapping")" class="waves-effect" id="AssessmentMappingList"><i class="md  md-assignment"></i> <span>Assessment Mapping</span> </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a href="@Url.Action("Dashboard","User")" class="waves-effect"><i class="fa fa-home"></i> <span>Dashboard</span> </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("PendingAssessmentList","Assessment")" class="waves-effect"><i class="fa fa-users"></i> <span>Assessment</span> </a>
+                                <a href="@Url.Action("AssessmentHistory","Assessment")" class="waves-effect"><i class="fa fa-users"></i> <span>Assessment History</span> </a>
                             </li>
                         }
                         <hr>

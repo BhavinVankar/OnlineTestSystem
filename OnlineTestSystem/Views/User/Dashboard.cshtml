@@ -1,5 +1,118 @@
-﻿@{
+﻿@using OnlineTestSystem.Models.Common
+@using OnlineTestSystem.Services.Abstraction
+@inject IUserHelper _userHelper;
+@inject IAssessmentHelper _assessmentHelper;
+@{
     Layout = "~/Views/Shared/_MasterLayout.cshtml";
     ViewData["Title"] = "Dashboard";
     ViewData["navId"] = "Dashboard";
+    var totalUsers = _userHelper.GetAllUsers();
+    var totalAssessment = _assessmentHelper.GetAllAssessmentsData();
+    var totalAssessmentMapping = _assessmentHelper.GetAllAssessmentsMappingData();
+    var userRole = "Admin";
 }
+@if (userRole == AppConstants.Admin)
+{
+    <div class="row">
+        <div class="col-sm-12">
+            <h4 class="page-title">Dashboard</h4>
+            <p class="text-muted page-title-alt">Welcome to admin panel !</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3 col-sm-6">
+            <div class="widget-panel widget-style-2 bg-white">
+                <i class="md md-view-list text-primary"></i>
+                <h2 class="m-0 text-dark counter font-600">@totalAssessment.Count()</h2>
+                <div class="text-muted m-t-5">Total Assessments</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="widget-panel widget-style-2 bg-white">
+                <i class="md  md-assignment text-pink"></i>
+                <h2 class="m-0 text-dark counter font-600">@totalAssessmentMapping.Count()</h2>
+                <div class="text-muted m-t-5">Total Assessment Mapping</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="widget-panel widget-style-2 bg-white">
+                <i class="md md-account-child text-info"></i>
+                <h2 class="m-0 text-dark counter font-600">@totalUsers.Count(u => u.IsActive == true)</h2>
+                <div class="text-muted m-t-5">Active Users</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="widget-panel widget-style-2 bg-white">
+                <i class="fa fa-users text-custom"></i>
+                <h2 class="m-0 text-dark counter font-600">@totalUsers.Count()</h2>
+                <div class="text-muted m-t-5">Total Users</div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="card">
+            <div class="card-body" style="width: 35%; height: 30%;">
+                <canvas id="userChart"></canvas>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col-sm-12">
+            <h4 class="page-title">Dashboard</h4>
+            <p class="text-muted page-title-alt">Welcome to admin panel !</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3 col-sm-6">
+            <div class="widget-panel widget-style-2 bg-white">
+                <i class="md md-view-list text-primary"></i>
+                <h2 class="m-0 text-dark counter font-600">@totalAssessment.Count()</h2>
+                <div class="text-muted m-t-5">Total Pending Assessments</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="widget-panel widget-style-2 bg-white">
+                <i class="md  md-assignment text-pink"></i>
+                <h2 class="m-0 text-dark counter font-600">@totalAssessmentMapping.Count()</h2>
+                <div class="text-muted m-t-5">Total Complete Assessment</div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="card">
+            <div class="card-body" style="width: 35%; height: 30%;">
+                <canvas id="candidateChart"></canvas>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: '@Url.Action("GetUserStats", "User")',
+            type: 'GET',
+            success: function (data) {
+                var ctx = document.getElementById('userChart').getContext('2d');
+                var userChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Active Users', 'Inactive Users'],
+                        datasets: [{
+                            data: [data.activeUsers, data.inactiveUsers],
+                            backgroundColor: ['#28a745', '#dc3545'],
+                        }]
+                    },
+                    options: {
+                        responsive: true
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

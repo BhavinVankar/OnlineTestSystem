@@ -4,14 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Collections.Specialized.BitVector32;
 
-namespace OnlineTestSystem.Models.RequestModel
+namespace OnlineTestSystem.Models.ResponseModel
 {
-    public class AssessmentRequestModel
+    public class AssessmentResponseModel
     {
         public Guid Id { get; set; } = Guid.NewGuid();
-        public Guid UserId { get; set; } 
 
         [Required]
         public string TestName { get; set; }
@@ -24,5 +22,4 @@ namespace OnlineTestSystem.Models.RequestModel
 
         public List<SectionModel> Sections { get; set; } = new List<SectionModel>();
     }
-  
 }

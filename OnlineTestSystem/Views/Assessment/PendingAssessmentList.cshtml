@@ -1,0 +1,49 @@
+﻿@{
+    Layout = "~/Views/Shared/_MasterLayout.cshtml";
+    ViewData["Title"] = "Assessment List Page";
+    ViewData["navId"] = "AssessmentList";
+}
+@model AssessmentModel
+<!-- Page-Title -->
+<div class="row">
+    <div class="col-sm-12 m-l-10">
+        <h4 class="page-title"> Assessment</h4>
+        <ol class="breadcrumb">
+            <li>
+                <a href="@Url.Action("Dashboard","User")">Dashboard</a>
+            </li>
+            <li class="active">
+                List of Pending Assessment
+            </li>
+        </ol>
+    </div>
+</div>
+<!---------------------- AssessmentData Listing Page ---------------->
+<div class="row">
+    <div class="col-lg-12 ">
+        <div class="portlet">
+            <!-- /primary heading -->
+            <div class="portlet-heading">
+                <div class="table-responsive">
+                    <div id="PendingAssessmentPartialData">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- end col -->
+<!------------------------------------------- Terms and Condition Assessment Modal ----------------------------------------->
+<div id="TermsAndConditionAssessmentModal" class="modal fade bd-example-modal-md" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;" aria-modal="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><b>Terms and Condition</b></h4>
+            </div>
+            <div class="modal-body" id="modelTermsAndConditionAssessmentBody">
+            </div>
+          
+        </div>
+    </div>
+</div>
+
+<script src="~/js/Assessment/CandidateAssessment.js"></script>

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineTestSystem.Models;
 using OnlineTestSystem.Models.Common;
 using OnlineTestSystem.Models.RequestModel;
+using OnlineTestSystem.Models.ResponseModel;
 using OnlineTestSystem.Services.Abstraction;
 using OnlineTestSystem.Services.Repository;
 using static System.Net.Mime.MediaTypeNames;
@@ -73,7 +74,7 @@ namespace OnlineTestSystem.Controllers
                 }
                 return View(new AssessmentRequestModel());
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return BadRequest(404);
             }
@@ -124,7 +125,7 @@ namespace OnlineTestSystem.Controllers
                 }
                 return View(assessmentInfo);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return BadRequest(404);
             }
@@ -198,7 +199,7 @@ namespace OnlineTestSystem.Controllers
                 else
                 {
                     _assessmentHelper.DeleteAssessment(id);
-                return RedirectToAction("AssessmentList", assessmentInfo);
+                    return RedirectToAction("AssessmentList", assessmentInfo);
                 }
             }
             catch (Exception ex)
@@ -207,6 +208,127 @@ namespace OnlineTestSystem.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult PendingAssessmentList()
+        {
+            try
+            {
+                if (HttpContext.User.Claims == null || HttpContext.User.Claims.Count() == 0)
+                {
+                    return RedirectToAction("SignIn", "Account");
+                }
+                return View();
+            }
+            catch (Exception ex)
+            {
+                return View(ex);
+            }
+        }
+        [HttpGet]
+        public IActionResult Read_PendingAssessments()
+        {
+            try
+            {
+                if (HttpContext.User.Claims == null || HttpContext.User.Claims.Count() == 0)
+                {
+                    return Unauthorized();
+                }
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == AppConstants.UserId);
+                Guid userId = Guid.Parse(userIdClaim?.Value);
+                var assessmentsData = _assessmentHelper.GetAllPendingAssessmentsDataById(userId);
+                if (assessmentsData == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    var userRoleClaim = User.Claims.FirstOrDefault(c => c.Type == AppConstants.UserRole);
+                    ViewBag.UserRole = userRoleClaim?.Value;
+                    return PartialView("_PendingAssessmentsList", assessmentsData);
+                }
+            }
+            catch (Exception ex)
+            {
+                return View(ex);
+            }
+        }
 
+        [HttpGet]
+        public IActionResult TermsAnsConditionAssessment(Guid id)
+        {
+            try
+            {
+                if (HttpContext.User.Claims == null || !HttpContext.User.Claims.Any())
+                {
+                    return RedirectToAction("SignIn", "Account");
+                }
+                var assessmentData = _assessmentHelper.GetAssessmentById(id);
+                // Create terms and conditions list
+                var termsAndConditions = new List<string>
+                                        {
+                                            "You must complete the assessment in one sitting.",
+                                            "No external help is allowed during the assessment.",
+                                            "Your progress will not be saved if you exit midway.",
+                                            "The assessment has a fixed time limit.",
+                                            "Any form of cheating will result in disqualification.",
+                                            "Ensure a stable internet connection during the test."
+                                        };
+
+                // Pass terms and conditions to the view via ViewBag
+                ViewBag.termsAndConditions = termsAndConditions;
+
+                return PartialView("_TermsAndCondition", assessmentData);
+            }
+            catch (Exception ex)
+            {
+                return View(ex);
+            }
+        }
+        [HttpGet]
+        public IActionResult StartAssessment(Guid id)
+        {
+            try
+            {
+                if (HttpContext.User.Claims == null || HttpContext.User.Claims.Count() == 0)
+                {
+                    return RedirectToAction("SignIn", "Account");
+                }
+                var assessmentData = _assessmentHelper.GetAssessmentById(id);
+                return View(assessmentData);
+            }
+            catch (Exception ex)
+            {
+                return View(ex);
+            }
+        }
+        [HttpPost]
+        public IActionResult SubmitAssessment(AssessmentResponseModel assessmentRequestModel)
+        {
+            try
+            {
+                if (HttpContext.User.Claims == null || HttpContext.User.Claims.Count() == 0)
+                {
+                    return Unauthorized();
+                }
+
+                var userIdclaims = User.Claims.FirstOrDefault(c => c.Type == AppConstants.UserId);
+                ModelState.Clear();
+                TryValidateModel(assessmentRequestModel);
+                if (ModelState.IsValid)
+                {
+                    //_assessmentHelper.AddAssessmentInfo(assessmentRequestModel);
+                    return RedirectToAction("AddAssessment");
+                }
+                else
+                {
+                    return PartialView("AddAssessment", assessmentRequestModel);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return View(ex.Message);
+            }
+        }
     }
 }

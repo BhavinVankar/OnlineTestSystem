@@ -1,45 +1,43 @@
 ﻿@model List<UserModel>
+
 @if (Model != null)
 {
-
-    <table class="table datatable" id="datatable">
-        <thead class="UserTable tableHeader">
-            <tr>
-                <th class="text-center">Registered Date</th>
-                <th class="text-center">Name</th>
-                <th class="text-center">Email Address</th>
-                <th class="text-center" style="width: 12%;">Action</th>
-            </tr>
-        </thead>
-        <tbody style="text-align:center;">
-            @foreach (var item in Model)
-            {
-                if (item.IsActive == true)
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered datatable" id="datatable">
+            <thead class="UserTable tableHeader">
+                <tr>
+                    <th class="text-center">Registered Date</th>
+                    <th class="text-center">Name</th>
+                    <th class="text-center">Email Address</th>
+                    <th class="text-center" style="width: 15%;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
                 {
-                    <tr>
-                        <td>@item.CreatedOn.ToString("dd MMM yyyy")</td>
-                        <td>@item.FirstName @item.LastName</td>
-                        <td>@item.EmailAddress</td>
-                        <td class="text-center" style="float:left;">
-                                <span class="tooltip-container">
-                                <button class="btn btn-warning btn-xs btn-icon fa fa-eye " data-toggle="modal" data-target="#ViewUserModal" onclick="ViewUser('@item.Id')">
+                    if (item.IsActive == true)
+                    {
+                        <tr>
+                            <td>@item.CreatedOn.ToString("dd MMM yyyy")</td>
+                            <td>@item.FirstName @item.LastName</td>
+                            <td>@item.EmailAddress</td>
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-warning btn-xs" data-toggle="modal" data-target="#ViewUserModal" onclick="ViewUser('@item.Id')" title="View">
+                                        <i class="fa fa-eye"></i>
                                     </button>
-                                    <span class="tooltip">View</span>
-                                </span>
-                                <span class="tooltip-container">
-                                    <button class="btn btn-success btn-xs btn-icon fa fa-pencil" data-toggle="modal" data-target="#EditUserModal" onclick="EditUser('@item.Id')"></button>
-                                    <span class="tooltip">Edit</span>
-                                </span>
-
-                                <span class="tooltip-container">
-                                    <button class="btn btn-danger btn-xs btn-icon fa fa-trash" onclick="deleteUser('@item.Id')" title="Delete User"></button>
-                                    <span class="tooltip">Delete</span>
-                                </span>
-                        </td>
-                    </tr>
+                                    <button class="btn btn-success btn-xs" data-toggle="modal" data-target="#EditUserModal" onclick="EditUser('@item.Id')" title="Edit">
+                                        <i class="fa fa-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-xs" onclick="deleteUser('@item.Id')" title="Delete">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
                 }
-
-            }
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 }

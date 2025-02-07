@@ -1,0 +1,101 @@
+﻿@using OnlineTestSystem.Models.ResponseModel
+@model AssessmentResponseModel
+@{
+    int Counter = 1;
+}
+
+<div class="modal-header bg-primary text-white">
+    <h5 class="modal-title text-center text-white" style="padding-top:8px;"><b>@Model.TestName</b></h5>
+</div>
+
+<div class="modal-body text-left">
+    <div class="alert alert-info">
+        <b><span class="text-danger"><b>*</b></span> Please read the following instructions carefully.</b>
+    </div>
+
+    @if (ViewBag.termsAndConditions != null)
+    {
+        var terms = ViewBag.termsAndConditions as List<string>;
+        if (terms != null)
+        {
+            <div class="card shadow-sm p-3">
+                <ul class="list-group list-group-flush">
+                    @foreach (var point in terms)
+                    {
+                        <li class="list-group-item">@Counter. @point</li>
+                        Counter++;
+                    }
+                </ul>
+            </div>
+            <div class="card" style="padding:5px;">
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="card p-2 shadow-sm">
+                            <label><b>Name:</b></label> @Model.TestName
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card p-2 shadow-sm">
+                            <label><b>Total Questions:</b></label> @Model.Sections.Sum(s => s.Questions.Count)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <div class="card p-2 shadow-sm">
+                            <label><b>Type:</b></label> Multiple Choice
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card p-2 shadow-sm">
+                            <label><b>Total Duration:</b></label> @(Model.Sections.Sum(s => s.Questions.Count) * 2) minutes
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <div class="card p-2 shadow-sm">
+                            <label><b>Total Marks:</b> </label> @(Model.Sections.Sum(s => s.Questions.Count))
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning">Unable to load terms and conditions.</div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-warning">No terms and conditions available.</div>
+    }
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="acceptTerms" />
+        <label class="form-check-label" for="acceptTerms">
+            <b>I have read the instructions carefully.</b>
+        </label>
+    </div>
+</div>
+
+<div class="modal-footer mt-5">
+    <button type="button" id="editclose" class="btn btn-secondary" data-dismiss="modal">
+        <i class="fa fa-times"></i> Close
+    </button>
+    <a class="btn btn-success disabled" id="acceptButton" href="@Url.Action("StartAssessment","Assessment", new {id=Model.Id})">
+        <i class="fa fa-play"></i> Start Test
+    </a>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#acceptTerms').change(function () {
+            if (this.checked) {
+                $('#acceptButton').removeClass('disabled').css({ "pointer-events": "auto", "opacity": "1" });
+            } else {
+                $('#acceptButton').addClass('disabled').css({ "pointer-events": "none", "opacity": "0.5" });
+            }
+        });
+    });
+</script>

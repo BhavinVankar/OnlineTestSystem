@@ -1,4 +1,4 @@
-﻿@using OnlineTestSystem.Models.RequestModel
+﻿@using OnlineTestSystem.Models.ResponseModel
 @model AssessmentResponseModel
 @{
     Layout = "~/Views/Shared/_MasterLayout.cshtml";
@@ -29,11 +29,12 @@
 </style>
 
 <div class="container">
-    <h2 class="text-center text-primary">Edit Assessment</h2>
     <form id="updateAssessmentForm" method="post" action="@Url.Action("UpdateAssessment")">
         <input type="hidden" name="Id" asp-for="Id" />
 
         <div class="panel panel-default">
+            <div style="padding: 15px;"><h2 class="text-center text-primary">Edit Assessment</h2></div>
+
             <div class="panel-heading bg-primary text-white">
                 <h3 class="panel-title">
                     <input type="text" name="TestName" class="form-control" asp-for="TestName" required />
@@ -96,7 +97,9 @@
         }
 
         <div class="text-center">
-            <button type="submit" class="btn btn-primary">Update</button>
+            <button type="submit" class="btn btn-primary">Update Assessment</button>
+            <a type="button" class="btn btn-danger" href="@Url.Action("AssessmentList", "Assessment")">Cancel Assessment</a>
         </div>
+
     </form>
 </div>
