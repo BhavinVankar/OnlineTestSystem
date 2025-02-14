@@ -17,5 +17,8 @@ namespace OnlineTestSystem.Models.Common
         public static string UserId = "UserId";
         public static string UserRole = "userRole";
 
+        public static string Pass ="1";
+        public static string Fail ="0";
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Extensions.Options;
 using OnlineTestSystem.DataAccess.Abstraction;
 using OnlineTestSystem.DataAccess.StoredProcedureDbAccess;
 using OnlineTestSystem.Models;
@@ -14,8 +15,10 @@ namespace OnlineTestSystem.DataAccess.Repository
 {
     public class AccountRepository : SqlDbRepository<UserModel>, IAccountRepository
     {
-        public AccountRepository(string connectionString) : base(connectionString)
+        private readonly RepositoryOptions repositoryOptions;
+        public AccountRepository(IOptions< RepositoryOptions> repositoryOptions) : base(repositoryOptions.Value.DefaultConnection)
         {
+            this.repositoryOptions = repositoryOptions.Value;
         }
         public UserModel CheckEmailExists(string emailAddress)
         {

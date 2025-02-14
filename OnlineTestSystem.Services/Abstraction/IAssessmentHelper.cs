@@ -14,11 +14,13 @@ namespace OnlineTestSystem.Services.Abstraction
         void AddAssessmentInfo(AssessmentRequestModel assessmentRequestModel);
         void AddAssessmentMapping(AddAssessmentMappingModel addAssessmentMappingModel);
         void DeleteAssessment(Guid id);
+        List<AssessmentHistoryModel> GetAllAssessmentHistoryData(int statusId);
         List<AssessmentModel> GetAllAssessmentsData();
         List<AssessmentMappingModel> GetAllAssessmentsMappingData();
         List<AssessmentModel> GetAllPendingAssessmentsDataById(Guid userId);
         AssessmentResponseModel GetAssessmentById(Guid id);
         AssessmentMappingViewModel GetAssessmentMappingById(Guid id);
+        void SubmitAssessment(AssessmentResponseModel assessmentRequestModel, Guid userId);
         void UpdateAssessmentInfo(AssessmentRequestModel assessmentRequestModel);
     }
 }

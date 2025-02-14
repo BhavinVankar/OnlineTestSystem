@@ -12,6 +12,11 @@ using System.Text;
 using OnlineTestSystem.Models.Common;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using OnlineTestSystem.DataAccess;
+using Microsoft.Extensions.DependencyInjection;
+using OnlineTestSystem.Services.AutoMapperConfiguration;
+using OnlineTestSystem.Services;
+using Microsoft.Extensions.Configuration;
 
 namespace OnlineTestSystem
 {
@@ -27,37 +32,15 @@ namespace OnlineTestSystem
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
-            services.AddHttpClient();
-            services.AddSession();
-          
-            var appSettingsSection = Configuration.GetSection("AppSettings");
-            services.Configure<AppSettings>(appSettingsSection);
-
-            var appSettings = appSettingsSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.JWTTokenGenKey);
 
             services.AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            }).AddJwtBearer(x =>
-            {
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidateLifetime = true,
-                    RequireExpirationTime = true,
-                    ClockSkew = TimeSpan.Zero
-                };
-            }).AddCookie(options =>
+            })
+            .AddCookie(options =>
             {
                 options.Cookie.Name = "Token"; // Set the cookie name
                 options.Cookie.HttpOnly = true;
@@ -66,32 +49,16 @@ namespace OnlineTestSystem
                 options.LoginPath = "/Account/SignIn"; // Set the login path
                 options.SlidingExpiration = true; // Enable sliding expiration
             });
-            services.AddAntiforgery(options =>
-            {
-                options.Cookie.Expiration = TimeSpan.Zero; // Set the desired expiration time or a different value as needed
-                options.Cookie.IsEssential = true; // Optional: Indicate whether the cookie is essential for the application's functionality
-            });
-            services.AddCors(c =>
-            {
-                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-            });
-            services.AddScoped<IAccountHelper, AccountHelper>();
-            services.AddScoped<IUserHelper, UserHelper>();
-            services.AddScoped<IAssessmentHelper, AssessmentHelper>();
 
             string connectionstring = Configuration.GetConnectionString("DefaultConnection");
-            services.AddTransient<IAccountRepository>(x => new AccountRepository(connectionstring));
-            services.AddTransient<IUserRepository>(x => new UserRepository(connectionstring));
-            services.AddTransient<IAssessmentRepository>(x => new AssessmentRepository(connectionstring));
 
-            services.AddAutoMapper(typeof(Startup));
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.Configure<RepositoryOptions>(Configuration.GetSection("ConnectionStrings"));
+
+            services.AddServiceLayer(Configuration);
+
             services.AddMvc(options =>
             {
-                // Prevent caching of authenticated pages
                 options.Filters.Add(new ResponseCacheAttribute { NoStore = true, Location = ResponseCacheLocation.None });
             });
         }
@@ -109,11 +76,10 @@ namespace OnlineTestSystem
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseSession();
             app.UseRouting();
-            app.UseCors();
             app.UseAuthentication();
             app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

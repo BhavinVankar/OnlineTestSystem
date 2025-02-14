@@ -11,7 +11,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace OnlineTestSystem.Controllers
 {
-    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+    [Authorize]
     public class AssessmentController : Controller
     {
         private readonly IAssessmentHelper _assessmentHelper;
@@ -312,12 +312,13 @@ namespace OnlineTestSystem.Controllers
                 }
 
                 var userIdclaims = User.Claims.FirstOrDefault(c => c.Type == AppConstants.UserId);
+                var userId=userIdclaims?.Value;
                 ModelState.Clear();
                 TryValidateModel(assessmentRequestModel);
                 if (ModelState.IsValid)
                 {
-                    //_assessmentHelper.AddAssessmentInfo(assessmentRequestModel);
-                    return RedirectToAction("AddAssessment");
+                    _assessmentHelper.SubmitAssessment(assessmentRequestModel, Guid.Parse(userId));
+                    return Ok(true);
                 }
                 else
                 {
@@ -328,6 +329,50 @@ namespace OnlineTestSystem.Controllers
             catch (Exception ex)
             {
                 return View(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult AssessmentHistoryList()
+        {
+            try
+            {
+                if (HttpContext.User.Claims == null || HttpContext.User.Claims.Count() == 0)
+                {
+                    return RedirectToAction("SignIn", "Account");
+                }
+                return View();
+            }
+            catch (Exception ex)
+            {
+                return View(ex);
+            }
+        }
+        [HttpGet]
+        public IActionResult Read_AssessmentHistory()
+        {
+            try
+            {
+                if (HttpContext.User.Claims == null || HttpContext.User.Claims.Count() == 0)
+                {
+                    return Unauthorized();
+                }
+                int statusId = 2;
+                var assessmentsData = _assessmentHelper.GetAllAssessmentHistoryData(statusId);
+                if (assessmentsData == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    var userRoleClaim = User.Claims.FirstOrDefault(c => c.Type == AppConstants.UserRole);
+                    ViewBag.UserRole = userRoleClaim?.Value;
+                    return PartialView("_AssessmentHistoryList", assessmentsData);
+                }
+            }
+            catch (Exception ex)
+            {
+                return View(ex);
             }
         }
     }

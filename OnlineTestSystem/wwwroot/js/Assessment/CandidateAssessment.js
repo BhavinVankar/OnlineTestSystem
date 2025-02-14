@@ -35,3 +35,26 @@ function TermsAndConditionAssessment(id) {
 
     });
 }
+function btnSubmitAssessmentData() {
+   var formData= $('#assessmentFormId').serialize();
+    $.ajax({
+        type: 'post',
+        url: '/Assessment/SubmitAssessment',
+        data: formData,
+        success: function (data) {
+            LoadAssessmentData();
+            if (data == true) {
+                toastr.success("Assessment Completed successfully!");
+                redirectToPage();
+            }
+            else {
+                $("#modelAddUserBody").html(data);
+            }
+        },
+        error: function (error) {
+            ErrorRedirection(error);
+        },
+    });
+}; function redirectToPage() {
+    window.location.href = "/Assessment/PendingAssessmentList";
+}

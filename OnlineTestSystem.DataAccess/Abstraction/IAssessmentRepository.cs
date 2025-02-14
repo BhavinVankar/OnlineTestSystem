@@ -16,11 +16,13 @@ namespace OnlineTestSystem.DataAccess.Abstraction
         void AddQuestion(QuestionModel questionData);
         Guid AddSection(SectionModel sectionData);
         void DeleteAssessment(Guid id);
+        List<AssessmentHistoryModel> GetAllAssessmentHistoryData(int statusId);
         List<AssessmentModel> GetAllAssessmentsData();
         List<AssessmentMappingModel> GetAllAssessmentsMappingData();
         List<AssessmentModel> GetAllPendingAssessmentsDataById(Guid userId);
         AssessmentResponseModel GetAssessmentById(Guid id);
         AssessmentMappingViewModel GetAssessmentMappingById(Guid id);
+        void SubmitAssessmentResult(AssessmentResultModel assessmentResultModel);
         void UpdateAssessmentInfo(AssessmentRequestModel assessmentData);
     }
 }

@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static OnlineTestSystem.Models.Common.Enums;
 
 namespace OnlineTestSystem.Services.Repository
 {
@@ -110,6 +111,58 @@ namespace OnlineTestSystem.Services.Repository
         {
             var allPendingAssessment = _assessmentRepository.GetAllPendingAssessmentsDataById(userId);
             return allPendingAssessment;
+        }
+
+        public void SubmitAssessment(AssessmentResponseModel assessmentRequestModel, Guid userId)
+        {
+            AssessmentResultModel assessmentResultModel = new();
+            int correctAnswers = 0;
+            foreach (var section in assessmentRequestModel.Sections)
+            {
+                var candidateSection = assessmentRequestModel.Sections.FirstOrDefault(s => s.Id == section.Id);
+                if (candidateSection != null)
+                {
+                    foreach (var question in section.Questions)
+                    {
+                        var candidateQuestion = candidateSection.Questions.FirstOrDefault(q => q.Id == question.Id);
+                        if (candidateQuestion != null)
+                        {
+                            if (candidateQuestion.SelectedAnswer == question.CorrectAnswer)
+                            {
+                                correctAnswers++;
+                            }
+                        }
+                    }
+                }
+            }
+            //Correct Answer Stored in Passing Score 
+            assessmentRequestModel.PassingScore = correctAnswers;
+            var assessmentInfo = _assessmentRepository.GetAssessmentById(assessmentRequestModel.Id);
+
+
+            var totalQuestions = assessmentRequestModel.Sections.Sum(s => s.Questions.Count());
+            // Calculate the percentage score if there are questions
+            if (totalQuestions > 0)
+            {
+                assessmentResultModel.Score = (decimal)correctAnswers / totalQuestions * 100;
+                if (assessmentResultModel.Score >= assessmentInfo.PassingScore)
+                {
+                    assessmentResultModel.Status = Convert.ToInt32(AssessmentStatus.Pass);
+                }
+                else
+                {
+                    assessmentResultModel.Status = Convert.ToInt32(AssessmentStatus.Fail);
+                }
+            }
+            var getAssessmentMappingData = _assessmentRepository.GetAllAssessmentsMappingData().Where(x => x.TestsId == assessmentRequestModel.Id && x.UserId == userId).FirstOrDefault();
+            assessmentResultModel.AssignmentId = getAssessmentMappingData.Id;
+            _assessmentRepository.SubmitAssessmentResult(assessmentResultModel);
+            //_assessmentRepository.SubmitAssessment(assessmentRequestModel);
+        }
+
+        public List<AssessmentHistoryModel> GetAllAssessmentHistoryData(int statusId)
+        {
+            return _assessmentRepository.GetAllAssessmentHistoryData(statusId);
         }
     }
 }

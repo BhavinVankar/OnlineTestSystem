@@ -6,85 +6,74 @@
 <div class="container quiz-container">
     <div class="row">
         <div class="col-md-12">
-            <form id="assessmentFormId" method="POST" action="@Url.Action("SubmitAssessment", "Assessment")">
-            <h1 class="text-center mb-4" name="@Model.TestName">@Model.TestName</h1>
-
-            <!-- Timer Section -->
-            <div class="timer-container text-center mb-4">
-                <h3 class="timer-text">Time Left: <span id="timer" class="text-danger">0</span> seconds</h3>
-            </div>
-
-            <!-- Question Container -->
-            <div id="question-container">
-                @if (Model.Sections != null && Model.Sections.Any())
-                {
-                    int counter = 1;
-                    @foreach (var sectionItem in Model.Sections)
-                    {
-                        <div class="section-container mb-5">
-                            <h3 class="section-title" name="@sectionItem.SectionName">@sectionItem.SectionName</h3>
-
-                            @if (sectionItem.Questions != null && sectionItem.Questions.Any())
-                            {
-                                @foreach (var questionItem in sectionItem.Questions)
-                                {
-                                    <div class="question-block card shadow-sm p-4 mb-4">
-                                        <p class="question-text">@questionItem.QuestionText</p>
-                                        <div class="answer-buttons">
-                                            <label class="answer-label">
-                                                <input type="radio" name="question_@counter" value="Yes" class="answer-radio" asp-for="@questionItem.CorrectAnswer" />
-                                                <span class="answer-text">Yes</span>
-                                            </label>
-                                            <label class="answer-label">
-                                                    <input type="radio" name="question_@counter" value="No" class="answer-radio" asp-for="@questionItem.CorrectAnswer"/>
-                                                <span class="answer-text">No</span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    counter++;
-                                }
-                            }
-                            else
-                            {
-                                <p>No questions available for this section.</p>
-                            }
-                        </div>
-                    }
+            <form id="assessmentFormId" method="POST">
+                @{
+                    int sectionIndex = 0;
                 }
-                else
+                <input type="hidden" asp-for="Id"/>
+                <input type="hidden" asp-for="TestName" />
+                <input type="hidden" asp-for="Description" />
+                @foreach (var sectionItem in Model.Sections)
                 {
-                    <p>No sections available in this assessment.</p>
-                }
-            </div>
+                    <div class="section-container">
+                        <h3>@sectionItem.SectionName</h3>
+                        <input type="hidden" name="Sections[@sectionIndex].Id" value="@sectionItem.Id" />
+                        <input type="hidden" name="Sections[@sectionIndex].SectionName" value="@sectionItem.SectionName" />
 
-            <div class="text-center mt-4">
-                    <button type="submit" id="submitButton" class="btn btn-primary btn-lg" disabled>Submit Test</button>
-            </div>
+                        @if (sectionItem.Questions != null && sectionItem.Questions.Any())
+                        {
+                            int questionIndex = 0;
+                            @foreach (var questionItem in sectionItem.Questions)
+                            {
+                                <div class="question-block">
+                                    <p>@questionItem.QuestionText</p>
+                                    <input type="hidden" name="Sections[@sectionIndex].Questions[@questionIndex].Id" value="@questionItem.Id" />
+                                    <input type="hidden" name="Sections[@sectionIndex].Questions[@questionIndex].QuestionText" value="@questionItem.QuestionText" />
+
+                                    <label>
+                                        <input type="radio" name="Sections[@sectionIndex].Questions[@questionIndex].SelectedAnswer" value="true" />
+                                        Yes
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="Sections[@sectionIndex].Questions[@questionIndex].SelectedAnswer" value="false" />
+                                        No
+                                    </label>
+                                </div>
+                                questionIndex++;
+                            }
+                        }
+                    </div>
+                    sectionIndex++;
+                }
+
+                <div class="text-center mt-4">
+                    <button type="button" onclick="btnSubmitAssessmentData()" class="btn btn-primary btn-lg">Submit Test</button>
+                </div>
             </form>
         </div>
     </div>
 </div>
 <script>
-      const totalQuestions = @Model.Sections.Sum(s => s.Questions.Count); 
-      const totalTimeInSeconds = totalQuestions * 2 * 60; 
-      let timer = totalTimeInSeconds;
-      const timerElement = document.getElementById("timer");
+    const totalQuestions = @Model.Sections.Sum(s => s.Questions.Count);
+    const totalTimeInSeconds = totalQuestions * 2 * 60;
+    let timer = totalTimeInSeconds;
+    const timerElement = document.getElementById("timer");
 
-      function updateTimer() {
-          const minutes = Math.floor(timer / 60);
-          const seconds = timer % 60;
-          timerElement.textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+    function updateTimer() {
+        const minutes = Math.floor(timer / 60);
+        const seconds = timer % 60;
+        timerElement.textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
 
-          if (timer === 0) {
-              toastr.Error("Time's up!");
-              document.getElementById("submitButton").disabled = false;
-          } else {
-              timer--;
-              setTimeout(updateTimer, 1000);
-          }
-      }
+        if (timer === 0) {
+            toastr.Error("Time's up!");
+            document.getElementById("submitButton").disabled = false;
+        } else {
+            timer--;
+            setTimeout(updateTimer, 1000);
+        }
+    }
 
-      updateTimer();
+    updateTimer();
 </script>
 
 <style>
@@ -163,7 +152,7 @@
         background-color: #3498db;
         border-color: #2980b9;
     }
-   
+
     .section-title {
         font-size: 1.5rem;
     }
@@ -181,3 +170,4 @@
     }
 
 </style>
+<script src="~/js/assessment/candidateassessment.js"></script>

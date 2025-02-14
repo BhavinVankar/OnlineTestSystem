@@ -15,7 +15,8 @@ namespace OnlineTestSystem.Models
         [Required]
         public string QuestionText { get; set; }
         public int QuestionOrder { get; set; }
-
+        // New property to store candidate’s selected answer
+        public bool? SelectedAnswer { get; set; }
         public bool CorrectAnswer { get; set; }
 
         public DateTime CreatedOn { get; set; } = DateTime.Now;

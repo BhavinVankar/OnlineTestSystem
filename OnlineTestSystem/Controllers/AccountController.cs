@@ -42,48 +42,41 @@ namespace OnlineTestSystem.Controllers
                         var userInfo = _accountHelper.SignIn(loginModel);
                         if (userInfo != null)
                         {
-                            if (userInfo.Role == AppConstants.Admin && userInfo.IsActive == true && userInfo.IsDeleted == false)
+                            if (userInfo.IsActive == true && userInfo.IsDeleted == false)
                             {
-                                string jToken = _accountHelper.GenerateToken(userInfo);
-                                if (!string.IsNullOrEmpty(jToken))
-                                {
-                                    var claims = new List<Claim>()
+                                var claims = new List<Claim>()
                                         {
-                                            new Claim(AppConstants.Token, jToken),
                                                 new Claim(AppConstants.UserId, userInfo.Id.ToString()),
                                                 new Claim(AppConstants.UserRole, userInfo.Role)
                                             };
-                                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                                    var principal = new ClaimsPrincipal(identity);
-                                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties()
-                                    {
-                                        IsPersistent = true
-                                    });
+                                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                                var principal = new ClaimsPrincipal(identity);
+                                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties()
+                                {
+                                    IsPersistent = true
+                                });
 
-                                    HttpContext.Session.SetString(AppConstants.Token, jToken);
-                                    return RedirectToAction("Dashboard", "User");
-                                }
-                            }
-                            else
-                            {
-                                string jToken = _accountHelper.GenerateToken(userInfo);
-                                if (!string.IsNullOrEmpty(jToken))
-                                {
-                                    var claims = new List<Claim>()
-                                        {
-                                                new Claim(AppConstants.Token, jToken),
-                                                new Claim(AppConstants.UserId, userInfo.Id.ToString()),
-                                                new Claim(AppConstants.UserRole, userInfo.Role)
-                                            };
-                                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                                    var principal = new ClaimsPrincipal(identity);
-                                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties()
-                                    {
-                                        IsPersistent = true
-                                    });
-                                    HttpContext.Session.SetString(AppConstants.Token, jToken);
-                                    return RedirectToAction("Dashboard", "User");
-                                }
+                                return RedirectToAction("Dashboard", "User");
+
+                                //string jToken = _accountHelper.GenerateToken(userInfo);
+                                //if (!string.IsNullOrEmpty(jToken))
+                                //{
+                                //    var claims = new List<Claim>()
+                                //        {
+                                //            new Claim(AppConstants.Token, jToken),
+                                //                new Claim(AppConstants.UserId, userInfo.Id.ToString()),
+                                //                new Claim(AppConstants.UserRole, userInfo.Role)
+                                //            };
+                                //    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                                //    var principal = new ClaimsPrincipal(identity);
+                                //    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties()
+                                //    {
+                                //        IsPersistent = true
+                                //    });
+
+                                //    HttpContext.Session.SetString(AppConstants.Token, jToken);
+                                //    return RedirectToAction("Dashboard", "User");
+                                //}
                             }
                         }
                     }
@@ -100,16 +93,17 @@ namespace OnlineTestSystem.Controllers
         }
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult SignOut()
+        public IActionResult Logout()
         {
             try
             {
 
-                HttpContext.Session.Clear();
-                Response.Cookies.Delete(AppConstants.Token);
-                Response.Cookies.Delete(".AspNetCore.Session");
-                HttpContext.SignOutAsync();
-                return RedirectToAction("SignIn");
+                return SignOut();
+                //HttpContext.Session.Clear();
+                //Response.Cookies.Delete(AppConstants.Token);
+                //Response.Cookies.Delete(".AspNetCore.Session");
+                //await HttpContext.SignOutAsync();
+                //return RedirectToAction("SignIn");
             }
             catch (Exception)
             {

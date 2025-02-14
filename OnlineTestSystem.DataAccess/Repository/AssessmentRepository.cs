@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Extensions.Options;
 using OnlineTestSystem.DataAccess.Abstraction;
 using OnlineTestSystem.DataAccess.StoredProcedureDbAccess;
 using OnlineTestSystem.Models;
@@ -10,14 +11,15 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Collections.Specialized.BitVector32;
 
 namespace OnlineTestSystem.DataAccess.Repository
 {
     public class AssessmentRepository : SqlDbRepository<UserModel>, IAssessmentRepository
     {
-        public AssessmentRepository(string connectionString) : base(connectionString)
+        private readonly RepositoryOptions repositoryOptions;
+        public AssessmentRepository(IOptions<RepositoryOptions> repositoryOptions) : base(repositoryOptions.Value.DefaultConnection)
         {
+            this.repositoryOptions = repositoryOptions.Value;
         }
 
         public Guid AddAssessmentInfo(AssessmentModel assessmentData)
@@ -86,6 +88,16 @@ namespace OnlineTestSystem.DataAccess.Repository
 
         }
 
+        public List<AssessmentHistoryModel> GetAllAssessmentHistoryData(int statusId)
+        {
+            using var vconn = GetOpenConnection();
+            var vParams = new DynamicParameters();
+            vParams.Add("@StatusId",statusId);
+            var assessmentList = vconn.Query<AssessmentHistoryModel>("sp_proc_GetAllAssessmentHistoryDataByStatusId", vParams, commandType: CommandType.StoredProcedure);
+            return assessmentList.ToList();
+
+        }
+
         public List<AssessmentModel> GetAllAssessmentsData()
         {
             using var vconn = GetOpenConnection();
@@ -135,6 +147,20 @@ namespace OnlineTestSystem.DataAccess.Repository
             vParams.Add("@Id",id);
             var assessmentList = vconn.Query<AssessmentMappingViewModel>("sp_proc_GetAssessmentMappingById", vParams, commandType: CommandType.StoredProcedure);
             return assessmentList.FirstOrDefault();
+        }
+
+        public void SubmitAssessmentResult(AssessmentResultModel assessmentResultModel)
+        {
+            using var vconn = GetOpenConnection();
+
+            var vParams = new DynamicParameters();
+            vParams.Add("@Id", assessmentResultModel.Id);
+            vParams.Add("@AssignmentId", assessmentResultModel.AssignmentId);
+            vParams.Add("@Score", assessmentResultModel.Score);
+            vParams.Add("@Status", assessmentResultModel.Status);
+            vParams.Add("@CreatedOn", DateTime.UtcNow);
+            vParams.Add("@CompletedOn", DateTime.UtcNow);
+            vconn.Execute("sp_proc_SubmitAssessmentResult", vParams, commandType: CommandType.StoredProcedure);
         }
 
         public void UpdateAssessmentInfo(AssessmentRequestModel assessmentData)

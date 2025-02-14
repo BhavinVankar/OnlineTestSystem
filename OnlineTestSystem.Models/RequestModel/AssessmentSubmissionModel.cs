@@ -9,22 +9,22 @@ namespace OnlineTestSystem.Models.RequestModel
 {
     public class AssessmentSubmissionModel
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public Guid UserId { get; set; }
-        public string TestName { get; set; }
-        public List<SectionViewModel> Sections { get; set; }
+        public int AssessmentId { get; set; }
+        public int CandidateId { get; set; }
+        public List<SectionSubmissionModel> Sections { get; set; }
     }
 
-    public class SectionViewModel
+    public class SectionSubmissionModel
     {
-        public string SectionName { get; set; }
-        public List<QuestionViewModel> Questions { get; set; }
+        public int SectionId { get; set; }
+        public List<QuestionSubmissionModel> Questions { get; set; }
     }
 
-    public class QuestionViewModel
+    public class QuestionSubmissionModel
     {
         public int QuestionId { get; set; }
-        public string QuestionText { get; set; }
+        public string SelectedAnswer { get; set; }
     }
+
 
 }
