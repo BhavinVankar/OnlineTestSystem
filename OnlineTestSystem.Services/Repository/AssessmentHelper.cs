@@ -56,7 +56,6 @@ namespace OnlineTestSystem.Services.Repository
         {
             _assessmentRepository.DeleteAssessment(id);
         }
-
         public List<AssessmentModel> GetAllAssessmentsData()
         {
             var allAssessmentList = _assessmentRepository.GetAllAssessmentsData();
@@ -69,13 +68,11 @@ namespace OnlineTestSystem.Services.Repository
                 return new List<AssessmentModel>();
             }
         }
-
         public AssessmentResponseModel GetAssessmentById(Guid id)
         {
             var assessmentInfo = _assessmentRepository.GetAssessmentById(id);
             return assessmentInfo;
         }
-
         public List<AssessmentMappingModel> GetAllAssessmentsMappingData()
         {
             var allAssessmentMappingList = _assessmentRepository.GetAllAssessmentsMappingData();
@@ -88,12 +85,10 @@ namespace OnlineTestSystem.Services.Repository
                 return new List<AssessmentMappingModel>();
             }
         }
-
         public void AddAssessmentMapping(AddAssessmentMappingModel addAssessmentMappingModel)
         {
             _assessmentRepository.AddAssessmentMapping(addAssessmentMappingModel);
         }
-
         public AssessmentMappingViewModel GetAssessmentMappingById(Guid id)
         {
             var result = _assessmentRepository.GetAssessmentMappingById(id);
@@ -106,13 +101,11 @@ namespace OnlineTestSystem.Services.Repository
                 return result;
             }
         }
-
         public List<AssessmentModel> GetAllPendingAssessmentsDataById(Guid userId)
         {
             var allPendingAssessment = _assessmentRepository.GetAllPendingAssessmentsDataById(userId);
             return allPendingAssessment;
         }
-
         public void SubmitAssessment(AssessmentResponseModel assessmentRequestModel, Guid userId)
         {
             AssessmentResultModel assessmentResultModel = new();
@@ -159,7 +152,6 @@ namespace OnlineTestSystem.Services.Repository
             _assessmentRepository.SubmitAssessmentResult(assessmentResultModel);
             //_assessmentRepository.SubmitAssessment(assessmentRequestModel);
         }
-
         public List<AssessmentHistoryModel> GetAllAssessmentHistoryData(int statusId)
         {
             return _assessmentRepository.GetAllAssessmentHistoryData(statusId);

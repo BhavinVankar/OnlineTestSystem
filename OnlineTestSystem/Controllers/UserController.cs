@@ -16,180 +16,108 @@ namespace OnlineTestSystem.Controllers
     {
         private readonly IUserHelper _userHelper;
         private readonly IAccountHelper _accountHelper;
-        public UserController(IUserHelper userHelper, IAccountHelper accountHelper)
+        public UserController(IUserHelper userHelper
+                             , IAccountHelper accountHelper)
         {
             _userHelper = userHelper;
             _accountHelper = accountHelper;
         }
+        [HttpGet]
         public IActionResult Dashboard()
         {
-            try
-            {
-                return View();
-            }
-            catch (Exception ex)
-            {
-                return View(ex);
-            }
+            return View();
         }
         [HttpGet]
         public IActionResult UserList()
         {
-            try
-            {
-                return View();
-            }
-            catch (Exception ex)
-            {
-                return View(ex);
-            }
+            return View();
         }
         [HttpGet]
         public IActionResult Read_Users()
         {
-            try
+            var usersData = _userHelper.GetAllUserData();
+            if (usersData == null)
             {
-                var usersData = _userHelper.GetAllUserData();
-                if (usersData == null)
-                {
-                    return BadRequest();
-                }
-                else
-                {
-                    var userRoleClaim = User.Claims.FirstOrDefault(c => c.Type == AppConstants.UserRole);
-                    ViewBag.UserRole = userRoleClaim?.Value;
-                    return PartialView("_UserList", usersData);
-                }
+                return BadRequest();
             }
-            catch (Exception ex)
+            else
             {
-                return View(ex);
+                var userRoleClaim = User.Claims.FirstOrDefault(c => c.Type == AppConstants.UserRole);
+                ViewBag.UserRole = userRoleClaim?.Value;
+                return PartialView("_UserList", usersData);
             }
         }
 
         [HttpGet]
         public IActionResult AddUser()
         {
-            try
-            {
-                return PartialView("_AddUserPartial");
-            }
-            catch (Exception e)
-            {
-                return BadRequest(404);
-            }
+            return PartialView("_AddUserPartial");
         }
 
         [HttpPost]
         public IActionResult AddUser(UserModel userModel)
         {
-            try
+            ModelState.Clear();
+            TryValidateModel(userModel);
+            if (ModelState.IsValid)
             {
-                var userIdclaims = User.Claims.FirstOrDefault(c => c.Type == AppConstants.UserId);
-                ModelState.Clear();
-                TryValidateModel(userModel);
-                if (ModelState.IsValid)
+                var emailExists = _accountHelper.CheckEmailExists(userModel.EmailAddress);
+                if (emailExists)
                 {
-                    var emailExists = _accountHelper.CheckEmailExists(userModel.EmailAddress);
-                    if (emailExists)
-                    {
-                        ModelState.AddModelError("EmailAddress", "Email Address is Exists");
-                        return PartialView("_AddUserPartial", userModel);
-                    }
-                    _userHelper.AddUser(userModel);
-                    return Ok(true);
-                }
-                else
-                {
+                    ModelState.AddModelError("EmailAddress", "Email Address is Exists");
                     return PartialView("_AddUserPartial", userModel);
-
                 }
+                _userHelper.AddUser(userModel);
+                return Ok(true);
             }
-            catch (Exception ex)
+            else
             {
-                return View(ex.Message);
+                return PartialView("_AddUserPartial", userModel);
+
             }
         }
         [HttpGet]
         public IActionResult EditUser(Guid id)
         {
-            try
-            {
-                var userInfo = _userHelper.GetEditUserById(id);
-                if (userInfo == null)
-                {
-                    return BadRequest();
-                }
-                return PartialView("_EditUserPartial", userInfo);
-            }
-            catch (Exception ex)
-            {
-                return View(ex.Message);
-            }
+            return PartialView("_EditUserPartial", _userHelper.GetEditUserById(id));
         }
         [HttpPost]
         public IActionResult EditUser(UpdateUserModel userModel)
         {
-            try
+            ModelState.Clear();
+            TryValidateModel(userModel);
+            userModel.Role = AppConstants.Candidate;
+            if (userModel.EmailAddress != null)
             {
-                ModelState.Clear();
-                TryValidateModel(userModel);
-                userModel.Role = AppConstants.Candidate;
-                if (userModel.EmailAddress != null)
+                var emailExists = _accountHelper.CheckEmailExistsByUserId(userModel.Role, userModel.EmailAddress, userModel.Id);
+                if (emailExists)
                 {
-                    var emailExists = _accountHelper.CheckEmailExistsByUserId(userModel.Role, userModel.EmailAddress, userModel.Id);
-                    if (emailExists)
-                    {
-                        ModelState.AddModelError("EmailAddress", "Email Address is Exists");
-                    }
+                    ModelState.AddModelError("EmailAddress", "Email Address is Exists");
                 }
-                if (ModelState.IsValid)
-                {
-                    _userHelper.UpdateUser(userModel);
-                    return Ok(true);
-                }
-                return PartialView("_EditUserPartial", userModel);
             }
-            catch (Exception ex)
+            if (ModelState.IsValid)
             {
-                return View(ex);
+                _userHelper.UpdateUser(userModel);
+                return Ok(true);
             }
+            return PartialView("_EditUserPartial", userModel);
         }
 
         [HttpGet]
         public IActionResult DeleteUser(Guid id)
         {
-            try
+            var userInfo = _userHelper.GetUserById(id);
+            if (userInfo == null)
             {
-                var userInfo = _userHelper.GetUserById(id);
-                if (userInfo == null)
-                {
-                    return BadRequest();
-                }
-                _userHelper.DeleteUser(id);
-                return Ok(true);
+                return BadRequest();
             }
-            catch (Exception ex)
-            {
-                return View(ex.Message);
-            }
+            _userHelper.DeleteUser(id);
+            return Ok(true);
         }
         [HttpGet]
         public IActionResult ViewUser(Guid id)
         {
-            try
-            {
-                var userInfo = _userHelper.GetUserById(id);
-                if (userInfo == null)
-                {
-                    return BadRequest();
-                }
-                return PartialView("_ViewUserPartial", userInfo);
-            }
-            catch (Exception ex)
-            {
-                return View(ex.Message);
-            }
+            return PartialView("_ViewUserPartial", _userHelper.GetUserById(id));
         }
 
         public IActionResult GetUserStats()

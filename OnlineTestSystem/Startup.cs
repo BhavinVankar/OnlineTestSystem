@@ -71,10 +71,10 @@ namespace OnlineTestSystem
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

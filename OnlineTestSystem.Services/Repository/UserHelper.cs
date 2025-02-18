@@ -20,38 +20,30 @@ namespace OnlineTestSystem.Services.Repository
             _userRepository = userRepository;
             _mapper = mapper;
         }
-
         public void AddUser(UserModel userModel)
         {
             _userRepository.AddUser(userModel);
         }
-
         public void DeleteUser(Guid userId)
         {
             _userRepository.DeleteUser(userId);
         }
-
         public List<UserModel> GetAllUserData()
         {
-            var allUsers = _userRepository.GetAllUserData();
-            return allUsers;
+            return _userRepository.GetAllUserData();
         }
         public List<UserModel> GetAllUsers()
         {
-            var allUsers = _userRepository.GetAllUsers();
-            return allUsers;
+            return _userRepository.GetAllUsers();
         }
-
         public UserModel GetUserById(Guid userId)
         {
-            var userInfo = _userRepository.GetUserById(userId);
-            return userInfo;
+            return _userRepository.GetUserById(userId);
         }
         public UpdateUserModel GetEditUserById(Guid userId)
         {
             return _mapper.Map<UserModel, UpdateUserModel>(_userRepository.GetUserById(userId));
         }
-
         public void UpdateUser(UpdateUserModel userModel)
         {
             _userRepository.UpdateUser(userModel);

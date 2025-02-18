@@ -36,18 +36,9 @@ namespace OnlineTestSystem.Services.Repository
                 return false;
             }
         }
-
         public UserModel SignIn(SignInModel loginModel)
         {
-            var userInfo = _accountRepository.SignIn(loginModel);
-            if(userInfo != null)
-            {
-                return userInfo;
-            }
-            else
-            {
-                return null;
-            }
+            return _accountRepository.SignIn(loginModel);
         }
         public string GenerateToken(UserModel userInfo)
         {
@@ -69,7 +60,6 @@ namespace OnlineTestSystem.Services.Repository
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-
         public bool CheckEmailExistsByUserId(string role, string emailAddress, Guid userId)
         {
             var userInfo = _accountRepository.CheckEmailExistsByUserId(role, emailAddress,userId);

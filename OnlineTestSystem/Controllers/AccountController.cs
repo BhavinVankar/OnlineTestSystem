@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace OnlineTestSystem.Controllers
 {
-    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+    [Authorize]
     public class AccountController : Controller
     {
         private readonly IAccountHelper _accountHelper;
@@ -21,7 +21,7 @@ namespace OnlineTestSystem.Controllers
         [AllowAnonymous]
         public IActionResult SignIn()
         {
-            if (HttpContext.User.Claims.Any() || HttpContext.User.Claims.Count() > 0)
+            if (HttpContext.User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Dashboard", "User");
             }
@@ -31,59 +31,44 @@ namespace OnlineTestSystem.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> SignInAsync(SignInModel loginModel)
         {
-            try
+            TryValidateModel(loginModel);
+            if (ModelState.IsValid)
             {
-                TryValidateModel(loginModel);
-                if (ModelState.IsValid)
+                var IsEmailExists = _accountHelper.CheckEmailExists(loginModel.EmailAddress);
+                if (IsEmailExists)
                 {
-                    var IsEmailExists = _accountHelper.CheckEmailExists(loginModel.EmailAddress);
-                    if (IsEmailExists)
+                    var userInfo = _accountHelper.SignIn(loginModel);
+                    if (userInfo != null)
                     {
-                        var userInfo = _accountHelper.SignIn(loginModel);
-                        if (userInfo != null)
+                        if (userInfo.IsActive == true && userInfo.IsDeleted == false)
                         {
-                            if (userInfo.IsActive == true && userInfo.IsDeleted == false)
-                            {
-                                var claims = new List<Claim>()
+                            var claims = new List<Claim>()
                                         {
                                                 new Claim(AppConstants.UserId, userInfo.Id.ToString()),
                                                 new Claim(AppConstants.UserRole, userInfo.Role)
                                             };
-                                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                                var principal = new ClaimsPrincipal(identity);
-                                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties()
-                                {
-                                    IsPersistent = true
-                                });
+                            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                            var principal = new ClaimsPrincipal(identity);
+                            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties()
+                            {
+                                IsPersistent = true
+                            });
 
-                                return RedirectToAction("Dashboard", "User");
-                            }
+                            return RedirectToAction("Dashboard", "User");
                         }
                     }
-                    ModelState.AddModelError("Password", "Invalid Email Address or Password!");
-                    return View(loginModel);
                 }
                 ModelState.AddModelError("Password", "Invalid Email Address or Password!");
                 return View(loginModel);
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            ModelState.AddModelError("Password", "Invalid Email Address or Password!");
+            return View(loginModel);
         }
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Logout()
         {
-            try
-            {
-                return SignOut();
-            }
-            catch (Exception)
-            {
-                return BadRequest(404);
-            }
-
+            return SignOut();
         }
     }
 }
