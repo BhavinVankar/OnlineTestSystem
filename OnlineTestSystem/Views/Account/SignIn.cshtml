@@ -29,10 +29,12 @@
                         <form asp-action="SignIn" asp-controller="Account">
                             <div data-mdb-input-init class="form-outline form-white mb-4">
                                 <input type="email" id="typeEmailX" class="form-control form-control-md" placeholder="Email Address" asp-for="EmailAddress" />
+                                <span asp-validation-for="EmailAddress" class="text-danger"></span>
                             </div>
 
                             <div data-mdb-input-init class="form-outline form-white mb-4">
                                 <input type="password" id="typePasswordX" placeholder="Password" class="form-control form-control-md" asp-for="Password" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
                             </div>
                             <button data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-light btn-lg px-5" type="submit">Login</button>
                         </form>

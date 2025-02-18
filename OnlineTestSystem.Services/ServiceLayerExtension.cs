@@ -25,10 +25,10 @@ namespace OnlineTestSystem.Services
                 cfg.AddProfile<AutoMapperConfig>();
             });
 
-            // ✅ Create an IMapper instance
+            //Create an IMapper instance
             var mapper = config.CreateMapper();
 
-            // ✅ Register the IMapper instance with DI
+            //Register the IMapper instance with DI
             services.AddSingleton(mapper);
 
             typeof(IUserHelper).Assembly.GetTypes()

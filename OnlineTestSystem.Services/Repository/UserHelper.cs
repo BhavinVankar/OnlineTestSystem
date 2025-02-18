@@ -1,4 +1,5 @@
-﻿using OnlineTestSystem.DataAccess.Abstraction;
+﻿using AutoMapper;
+using OnlineTestSystem.DataAccess.Abstraction;
 using OnlineTestSystem.Models;
 using OnlineTestSystem.Services.Abstraction;
 using System;
@@ -12,9 +13,12 @@ namespace OnlineTestSystem.Services.Repository
     public class UserHelper : IUserHelper
     {
         private readonly IUserRepository _userRepository;
-        public UserHelper(IUserRepository userRepository)
+        private readonly IMapper _mapper;
+        public UserHelper(IUserRepository userRepository,
+                          IMapper mapper)
         {
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         public void AddUser(UserModel userModel)
@@ -42,6 +46,10 @@ namespace OnlineTestSystem.Services.Repository
         {
             var userInfo = _userRepository.GetUserById(userId);
             return userInfo;
+        }
+        public UpdateUserModel GetEditUserById(Guid userId)
+        {
+            return _mapper.Map<UserModel, UpdateUserModel>(_userRepository.GetUserById(userId));
         }
 
         public void UpdateUser(UpdateUserModel userModel)

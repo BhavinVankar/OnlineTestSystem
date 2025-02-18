@@ -15,6 +15,7 @@ namespace OnlineTestSystem.Services.AutoMapperConfiguration
         {
             CreateMap<AssessmentModel, AssessmentRequestModel>().ReverseMap();
             CreateMap<AssessmentRequestModel, SectionModel>().ReverseMap();
+            CreateMap<UserModel, UpdateUserModel>().ReverseMap();
         }
     }
 }

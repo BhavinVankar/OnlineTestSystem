@@ -57,26 +57,6 @@ namespace OnlineTestSystem.Controllers
                                 });
 
                                 return RedirectToAction("Dashboard", "User");
-
-                                //string jToken = _accountHelper.GenerateToken(userInfo);
-                                //if (!string.IsNullOrEmpty(jToken))
-                                //{
-                                //    var claims = new List<Claim>()
-                                //        {
-                                //            new Claim(AppConstants.Token, jToken),
-                                //                new Claim(AppConstants.UserId, userInfo.Id.ToString()),
-                                //                new Claim(AppConstants.UserRole, userInfo.Role)
-                                //            };
-                                //    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                                //    var principal = new ClaimsPrincipal(identity);
-                                //    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties()
-                                //    {
-                                //        IsPersistent = true
-                                //    });
-
-                                //    HttpContext.Session.SetString(AppConstants.Token, jToken);
-                                //    return RedirectToAction("Dashboard", "User");
-                                //}
                             }
                         }
                     }
@@ -97,13 +77,7 @@ namespace OnlineTestSystem.Controllers
         {
             try
             {
-
                 return SignOut();
-                //HttpContext.Session.Clear();
-                //Response.Cookies.Delete(AppConstants.Token);
-                //Response.Cookies.Delete(".AspNetCore.Session");
-                //await HttpContext.SignOutAsync();
-                //return RedirectToAction("SignIn");
             }
             catch (Exception)
             {

@@ -14,6 +14,7 @@ namespace OnlineTestSystem.Services.Abstraction
         List<UserModel> GetAllUserData();
         List<UserModel> GetAllUsers();
         UserModel GetUserById(Guid userId);
+        UpdateUserModel GetEditUserById(Guid userId);
         void UpdateUser(UpdateUserModel userModel);
     }
 }

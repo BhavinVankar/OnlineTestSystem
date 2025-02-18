@@ -140,7 +140,7 @@ namespace OnlineTestSystem.Controllers
                 {
                     return Unauthorized();
                 }
-                var userInfo = _userHelper.GetUserById(id);
+                var userInfo = _userHelper.GetEditUserById(id);
                 if (userInfo == null)
                 {
                     return BadRequest();
@@ -164,10 +164,13 @@ namespace OnlineTestSystem.Controllers
                 ModelState.Clear();
                 TryValidateModel(userModel);
                 userModel.Role = AppConstants.Candidate;
-                var emailExists = _accountHelper.CheckEmailExistsByUserId(userModel.Role, userModel.EmailAddress, userModel.Id);
-                if (emailExists)
+                if (userModel.EmailAddress != null)
                 {
-                    ModelState.AddModelError("EmailAddress", "Email Address is Exists");
+                    var emailExists = _accountHelper.CheckEmailExistsByUserId(userModel.Role, userModel.EmailAddress, userModel.Id);
+                    if (emailExists)
+                    {
+                        ModelState.AddModelError("EmailAddress", "Email Address is Exists");
+                    }
                 }
                 if (ModelState.IsValid)
                 {
@@ -230,7 +233,7 @@ namespace OnlineTestSystem.Controllers
         {
             var activeUsers = _userHelper.GetAllUsers().Count(u => u.IsActive == true);
             var inactiveUsers = _userHelper.GetAllUsers().Count(u => u.IsActive == false);
-            return Json(new { activeUsers, inactiveUsers });  // Return JSON response
+            return Json(new { activeUsers, inactiveUsers });
         }
 
     }

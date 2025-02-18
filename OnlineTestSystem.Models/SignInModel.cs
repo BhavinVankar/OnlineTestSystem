@@ -11,6 +11,7 @@ namespace OnlineTestSystem.Models
     {
         public Guid UserId { get; set; }
         [Required(ErrorMessage ="The EmailAddress is required!")]
+        [EmailAddress]
         public string EmailAddress { get; set; }
         public string Password { get; set; }
     }

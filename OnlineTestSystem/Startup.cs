@@ -44,15 +44,12 @@ namespace OnlineTestSystem
             {
                 options.Cookie.Name = "Token"; // Set the cookie name
                 options.Cookie.HttpOnly = true;
-                //options.Cookie.SecurePolicy = CookieSecurePolicy.Always; //comment out this code once we have https domain
-                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest; //Temporary Solution need to remove this code after https domain
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
                 options.LoginPath = "/Account/SignIn"; // Set the login path
                 options.SlidingExpiration = true; // Enable sliding expiration
             });
 
-            string connectionstring = Configuration.GetConnectionString("DefaultConnection");
-
-
+            //string connectionstring = Configuration.GetConnectionString("DefaultConnection");
             services.Configure<RepositoryOptions>(Configuration.GetSection("ConnectionStrings"));
 
             services.AddServiceLayer(Configuration);
