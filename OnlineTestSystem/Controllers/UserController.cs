@@ -11,7 +11,7 @@ using System;
 
 namespace OnlineTestSystem.Controllers
 {
-    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+    [Authorize]
     public class UserController : Controller
     {
         private readonly IUserHelper _userHelper;
@@ -25,10 +25,6 @@ namespace OnlineTestSystem.Controllers
         {
             try
             {
-                if (HttpContext.User.Claims == null || HttpContext.User.Claims.Count() == 0)
-                {
-                    return RedirectToAction("SignIn", "Account");
-                }
                 return View();
             }
             catch (Exception ex)
@@ -41,10 +37,6 @@ namespace OnlineTestSystem.Controllers
         {
             try
             {
-                if (HttpContext.User.Claims == null || HttpContext.User.Claims.Count() == 0)
-                {
-                    return RedirectToAction("SignIn", "Account");
-                }
                 return View();
             }
             catch (Exception ex)
@@ -57,10 +49,6 @@ namespace OnlineTestSystem.Controllers
         {
             try
             {
-                if (HttpContext.User.Claims == null || HttpContext.User.Claims.Count() == 0)
-                {
-                    return Unauthorized();
-                }
                 var usersData = _userHelper.GetAllUserData();
                 if (usersData == null)
                 {
@@ -84,10 +72,6 @@ namespace OnlineTestSystem.Controllers
         {
             try
             {
-                if (HttpContext.User.Claims == null || HttpContext.User.Claims.Count() == 0)
-                {
-                    return BadRequest();
-                }
                 return PartialView("_AddUserPartial");
             }
             catch (Exception e)
@@ -101,11 +85,6 @@ namespace OnlineTestSystem.Controllers
         {
             try
             {
-                if (HttpContext.User.Claims == null || HttpContext.User.Claims.Count() == 0)
-                {
-                    return Unauthorized();
-                }
-
                 var userIdclaims = User.Claims.FirstOrDefault(c => c.Type == AppConstants.UserId);
                 ModelState.Clear();
                 TryValidateModel(userModel);
@@ -136,10 +115,6 @@ namespace OnlineTestSystem.Controllers
         {
             try
             {
-                if (HttpContext.User.Claims == null || HttpContext.User.Claims.Count() == 0)
-                {
-                    return Unauthorized();
-                }
                 var userInfo = _userHelper.GetEditUserById(id);
                 if (userInfo == null)
                 {
@@ -157,10 +132,6 @@ namespace OnlineTestSystem.Controllers
         {
             try
             {
-                if (HttpContext.User.Claims == null || HttpContext.User.Claims.Count() == 0)
-                {
-                    return RedirectToAction("SignIn", "Account");
-                }
                 ModelState.Clear();
                 TryValidateModel(userModel);
                 userModel.Role = AppConstants.Candidate;
@@ -190,10 +161,6 @@ namespace OnlineTestSystem.Controllers
         {
             try
             {
-                if (HttpContext.User.Claims == null || HttpContext.User.Claims.Count() == 0)
-                {
-                    return Unauthorized();
-                }
                 var userInfo = _userHelper.GetUserById(id);
                 if (userInfo == null)
                 {
@@ -212,10 +179,6 @@ namespace OnlineTestSystem.Controllers
         {
             try
             {
-                if (HttpContext.User.Claims == null || HttpContext.User.Claims.Count() == 0)
-                {
-                    return Unauthorized();
-                }
                 var userInfo = _userHelper.GetUserById(id);
                 if (userInfo == null)
                 {
