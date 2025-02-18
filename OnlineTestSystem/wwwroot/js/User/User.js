@@ -13,7 +13,9 @@ function LoadUserData() {
         success: function (data) {
             HideLoader();
             $('#UserPartialData').html(data);
-            $('#datatable').dataTable();
+            $('#datatable').dataTable({
+                "order": [[0, "desc"]] 
+            });
         },
         error: function (error) {
             ErrorRedirection(error);

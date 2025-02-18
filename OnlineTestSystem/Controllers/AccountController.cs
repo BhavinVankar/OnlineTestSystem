@@ -68,7 +68,8 @@ namespace OnlineTestSystem.Controllers
         [AllowAnonymous]
         public IActionResult Logout()
         {
-            return SignOut();
+             SignOut();
+            return Ok();
         }
     }
 }

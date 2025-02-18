@@ -97,3 +97,16 @@ function HideLoader() {
     $(".loader").css('display', 'none');
 
 }
+function logout() {
+                $.ajax({
+                    type: 'get',
+                    url: '/Account/Logout',
+                    data: {},
+                    success: function (data) {
+                        window.location.reload();
+                    },
+                    error: function (error) {
+                        ErrorRedirection(error);
+                    }
+                })
+};
